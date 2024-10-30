@@ -7,7 +7,7 @@
 
 /* Body styling */
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: #f4f6f8;
   color: #333;
   line-height: 1.6;
@@ -63,7 +63,8 @@ footer a:hover {
 }
 
 /* Center content for search and edit pages */
-.SearchPage, .EditPage {
+.SearchPage,
+.EditPage {
   padding: 20px;
   display: flex;
   justify-content: center;
@@ -90,7 +91,8 @@ form {
     padding: 20px;
   }
 
-  .SearchPage, .EditPage {
+  .SearchPage,
+  .EditPage {
     padding: 10px;
   }
 
