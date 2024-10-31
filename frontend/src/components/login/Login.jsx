@@ -76,7 +76,7 @@ const LoginForm = () => {
                 >
                     Search
                 </Button>
-
+                <Box sx={{ mt: 2 }} />
                 <Button
                     variant="contained"
                     color="primary"
