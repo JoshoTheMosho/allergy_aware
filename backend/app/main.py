@@ -24,7 +24,6 @@ is_development = os.getenv("ENVIRONMENT") == "development"
 if is_development:
     logger.info("Development mode active. Allowing all origins.")
     frontend_url = "*"
-
 else:
     logger.info(f"Production mode. Allowing frontend URL: {frontend_url}")
 
