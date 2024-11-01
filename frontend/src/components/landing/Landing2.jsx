@@ -33,7 +33,7 @@ const Landing = () => {
       },
       {
         title: "Enterprise",
-        price: "Contact Us",
+        price: "Custom",
         features: [
           "Everything In Starter",
           "Unlimited Dishes",
@@ -41,7 +41,7 @@ const Landing = () => {
           "Priority Support",
           "24/7 premium support"
         ],
-        buttonText: "Choose Enterprise",
+        buttonText: "Contact Us",
         type: "enterprise"
       }
     ];
@@ -157,8 +157,8 @@ const Landing = () => {
                     dietary restrictions, and custom tags can be created for unique needs.
                   </p>
                 </div>
-                <div className="image-container">
-                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730448100/allergenie_frontend_tqf6xi.png" alt="Chrome Extension in action" className="step-image" />
+                <div className="image-container-2">
+                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730448100/allergenie_frontend_tqf6xi.png" alt="Chrome Extension in action" className="step-image-2" />
                 </div>
               </div>
               <div className="step">
@@ -223,7 +223,7 @@ const Landing = () => {
 
           <section className="cta">
             <h2 className="section-title">Ready to Transform Your Restaurant Operations?</h2>
-            <Link className="button-36 cta-button" to="/leads">
+            <Link className="button-36 cta-button" to="/search">
               Start Now
             </Link>
           </section>
