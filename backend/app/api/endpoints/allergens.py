@@ -169,7 +169,7 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
             .eq("name", original_name)\
             .execute()
 
-        logger.info(f'Deleted dish {original_name} and its ingredients')
+        logger.info(f'Deleted dish {original_name} from dishes table')
 
         # Step 4: Delete then insert ingredients and associated allergens
         for ingredient in ingredients:
@@ -181,7 +181,6 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
                 .eq("restaurant_id", restaurant_id)\
                 .eq("name", ingredient_name)\
                 .execute()
-
 
             # Insert each ingredient for the new dish
             insert_ingredient_response = supabase.table("dishes").insert({
@@ -272,7 +271,6 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
             .eq("name", dishName)\
             .execute()
         
-        
         if not dish_result.data:
             logger.warning("Dish '%s' not found for restaurant_id: %s", dishName, restaurant_id)
             raise HTTPException(status_code=404, detail="Dish not found")
@@ -286,25 +284,38 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
         
         logger.info("Ingredients Result: %s", ingredients_result)
 
-        # Step 4: Structure ingredients with allergens, fetch allergens from the ingredients table
+        # Step 4: Structure ingredients with allergens, ensuring uniqueness
+        unique_ingredients = set()
         ingredients_with_allergens = []
+        
         for item in ingredients_result.data:
             ingredient_name = item["ingredient"]
+            
+            # Skip if the ingredient has already been processed
+            if ingredient_name in unique_ingredients:
+                continue
+            
+            unique_ingredients.add(ingredient_name)
+
+            # Fetch allergens for the ingredient
             ingredient_result = supabase.table("ingredients")\
                 .select("allergen")\
                 .eq("restaurant_id", restaurant_id)\
                 .eq("name", ingredient_name)\
                 .execute()
 
-            # Filter out allergens with the value "Unknown"
-            allergens = [allergen["allergen"] for allergen in ingredient_result.data if allergen["allergen"] and allergen["allergen"] != "Unknown"]
+            # Deduplicate allergens and filter out "Unknown"
+            allergens = list(set(
+                allergen["allergen"] 
+                for allergen in ingredient_result.data 
+                if allergen["allergen"] and allergen["allergen"] != "Unknown"
+            ))
 
             ingredients_with_allergens.append({
                 "ingredient": ingredient_name,
                 "allergens": allergens
             })
 
-        # Step 5: Structure the response with required fields for the Dish model
         logger.info(f'Successfully fetched dish {dishName} with ingredients and allergens {ingredients_with_allergens}')
 
         return ingredients_with_allergens

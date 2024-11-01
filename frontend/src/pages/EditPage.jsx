@@ -32,8 +32,6 @@ const EditPage = ({ token }) => {
             setErrorMessage("Failed to fetch data. Please try again.");
         } finally {
             setIsLoading(false);
-            setErrorMessage(null);
-            setSuccessMessage(null);
         }
     };
 
@@ -73,7 +71,8 @@ const EditPage = ({ token }) => {
             const response = await fetch(`${config.backendUrl}/allergens/dishes/${dishName}`, { headers: { 'Authorization': `Bearer ${token}` } });
             const dishData = await response.json();
             setEditedDishName(dishName);
-            setIngredients(dishData || [{ ingredient: '', allergens: [] }]);
+            // Ensure we have a ingredient template at the end
+            setIngredients(dishData ? [...dishData, { ingredient: '', allergens: [] }] : [{ ingredient: '', allergens: [] }]);
         } catch {
             setIngredients([{ ingredient: '', allergens: [] }]);
         } finally {
@@ -98,6 +97,8 @@ const EditPage = ({ token }) => {
             setEditedDishName('');
             setIngredients([{ ingredient: '', allergens: [] }]);
         }
+        setSuccessMessage(null);
+        setErrorMessage(null);
     };
 
     const handleIngredientChange = (index, newIngredient) => {
@@ -132,7 +133,7 @@ const EditPage = ({ token }) => {
         setIsSaving(true);
         const dishPayload = {
             originalName: selectedDish ? selectedDish.label : '',
-            newName: dishName,
+            newName: editedDishName,
             ingredients: ingredients
                 .filter((item) => item.ingredient) // Filter out items with no ingredient
                 .map((item) => ({
@@ -140,6 +141,8 @@ const EditPage = ({ token }) => {
                     allergens: item.allergens || ['Unknown']
                 })),
         };
+
+        console.log(dishPayload);
 
         if (!dishPayload.newName || dishPayload.ingredients.some((item) => !item.ingredient)) {
             setErrorMessage("Dish name and ingredients are required.");
@@ -158,6 +161,7 @@ const EditPage = ({ token }) => {
                 setDishName('');
                 setIngredients([{ ingredient: '', allergens: [] }]);
                 setSelectedDish(null);
+                fetchAvailableData();
             } else {
                 setErrorMessage("Error saving dish. Please try again.");
             }
