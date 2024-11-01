@@ -1,14 +1,9 @@
-import { Box, Typography, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Autocomplete, TextField } from '@mui/material';
+import { useState } from 'react';
 
-const TagSelector = ({ tags, setTags }) => {
-    const availableTags = ['Vegan', 'Gluten Free', 'Nut Free'];
-
-    const toggleTag = (tag) => {
-        setTags((prevTags) =>
-            prevTags.includes(tag)
-                ? prevTags.filter((t) => t !== tag)
-                : [...prevTags, tag]
-        );
+const TagSelector = ({ tags, setTags, availableTags }) => {
+    const handleTagChange = (event, newTags) => {
+        setTags(newTags);
     };
 
     return (
@@ -17,21 +12,17 @@ const TagSelector = ({ tags, setTags }) => {
                 Tags
             </Typography>
 
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                {availableTags.map((tag) => (
-                    <FormControlLabel
-                        key={tag}
-                        control={
-                            <Checkbox
-                                checked={tags.includes(tag)}
-                                onChange={() => toggleTag(tag)}
-                                color="primary"
-                            />
-                        }
-                        label={tag}
-                    />
-                ))}
-            </Box>
+            <Autocomplete
+                multiple
+                freeSolo
+                options={availableTags}
+                value={tags}
+                onChange={handleTagChange}
+                renderInput={(params) => (
+                    <TextField {...params} variant="outlined" label="Select or Create Tags" placeholder="Tags" />
+                )}
+                sx={{ width: '100%' }}
+            />
         </Box>
     );
 };
