@@ -158,7 +158,7 @@ const Landing = () => {
                   </p>
                 </div>
                 <div className="image-container-2">
-                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730448100/allergenie_frontend_tqf6xi.png" alt="Chrome Extension in action" className="step-image-2" />
+                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730485883/Edit_dish_y4yn2g.png" alt="Chrome Extension in action" className="step-image-2" />
                 </div>
               </div>
               <div className="step">
@@ -170,7 +170,7 @@ const Landing = () => {
                   </p>
                 </div>
                 <div className="image-container-2">
-                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730448100/allergenie_frontend_tqf6xi.png" alt="Dashboard" className="step-image-2" />
+                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730485883/allergens_iza2zy.png" alt="Dashboard" className="step-image-2" />
                 </div>
               </div>
               <div className="step">
