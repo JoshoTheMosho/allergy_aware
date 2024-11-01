@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './SearchBar.css'; // Importing SearchBar-specific CSS
 
 const SearchBar = ({ placeholder, onSearch, loading }) => {

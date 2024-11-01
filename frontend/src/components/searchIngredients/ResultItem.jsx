@@ -1,5 +1,5 @@
 // src/components/ResultItem/ResultItem.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './ResultItem.css';
 
 const ResultItem = ({ name, ingredients, allergens }) => {

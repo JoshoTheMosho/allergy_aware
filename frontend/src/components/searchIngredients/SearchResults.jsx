@@ -1,13 +1,11 @@
 // src/components/SearchResults.jsx
-import React from 'react';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import ResultItem from './ResultItem';
 import './SearchResults.css';
 
 const SearchResults = ({ results, loading, hasSearched }) => {
-    console.log("results:", results);
+  console.log("results:", results);
   return (
     <div className="search-results-container">
       {loading ? (

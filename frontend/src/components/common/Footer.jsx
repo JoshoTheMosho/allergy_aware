@@ -3,11 +3,9 @@ import { Box, Typography, Container } from '@mui/material';
 const Footer = () => {
     return (
         <Box
+            component="footer"
             sx={{
-                position: 'fixed',
-                bottom: 0,
-                width: '100%',
-                background: 'linear-gradient(to right, rgb(78, 153, 238), #3153b3) !important;',
+                background: 'linear-gradient(to right, rgb(78, 153, 238), #3153b3)',
                 padding: '10px 0',
                 color: 'white',
                 textAlign: 'center',
