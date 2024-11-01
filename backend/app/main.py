@@ -26,7 +26,7 @@ if is_development:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173"],  # Allow your frontend URL only in development
+        allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Allow your frontend URL only in development
         allow_credentials=True,
         allow_methods=["*"],  # Allow all HTTP methods
         allow_headers=["*"],  # Allow all headers

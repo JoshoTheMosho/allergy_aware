@@ -5,19 +5,14 @@ from ..dependencies.get_user import get_current_user
 from ...schemas.dish import Dish
 from ...schemas.ingredient import Ingredient
 from ...schemas.restaurant import Restaurant
-import logging
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Create a new APIRouter instance
 router = APIRouter()
 
-@router.get("/search/", response_model=List[Dish])
-def search_ingredients(query: str = Query(..., title="Query", description="Search by allergen or ingredient"), user=Depends(get_current_user)):
+@router.get("/search/", response_model=Dish)
+def search_ingredients(query: str = Query(..., title="Query", description="Search by dish name"), user=Depends(get_current_user)):
     """
-    Search for dishes based on allergens or ingredients.
+    Search for dishes based on dish name.
 
     Args:
         query (str): The search query string. This parameter is used to search for dishes by allergen or ingredient.
@@ -37,41 +32,60 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
             .eq("id", user.user.id)\
             .execute()
 
-        logger.info("User Result:", user_result.data)
+        print("User Result:", user_result.data)
 
         #restaurant_id = user_result.data["restaurant_id"]
         restaurant_id = user_result.data[0]['restaurant_id']
 
-        logger.info("Restaurant ID:", restaurant_id)
+        print("Restaurant ID:", restaurant_id)
 
-        # Step 2: Query the Ingredients table based on the ingredient name or allergen
-        ingredient_result = supabase.table("ingredients")\
+        # Step 2: Query the dishes table based on the queried dish name
+        dishes_result = supabase.table("dishes")\
             .select("*")\
-            .or_(f"name.ilike.%{query}%,allergen.ilike.%{query}%")\
+            .ilike("name", f"%{query}%")\
             .eq("restaurant_id", restaurant_id)\
             .execute()
 
          # Extract the list of ingredients found
-        ingredients_data = ingredient_result.data
-        if not ingredients_data:
+        dishes_data = dishes_result.data
+        if not dishes_data:
             return []
 
-        logger.info("Ingredients Data:", ingredients_data)
-
-        # Step 3: Get a list of ingredient names to find matching dishes
-        ingredient_names = [ingredient['name'] for ingredient in ingredients_data]
-
-        # Step 4: Query the Dishes table to find dishes containing these ingredients
-        dish_result = supabase.table("dishes")\
-            .select("*")\
-            .in_("ingredient", ingredient_names)\
-            .eq("restaurant_id", restaurant_id)\
-            .execute()
+        print("dishes Data:", dishes_data)
         
-        logger.info("Ingredient Names:", ingredient_names)
+        dish_ingredients = []
+        for dish in dishes_data:
+            dish_ingredients.append(dish.get('ingredient', []))
+        
+        print("Ingredients:", dish_ingredients)
 
-        # Return the list of dishes if found, otherwise an empty list
-        return [Dish(**dish) for dish in dish_result.data] if dish_result.data else []
+        # Step 3: Query the ingredients table to get the list of allergens associated with the dish
+        dish_allergens = []
+        for ingredient in dish_ingredients:
+            allergens_result = supabase.table("ingredients")\
+                .select("*")\
+                .ilike("name", f"%{ingredient}%")\
+                .eq("restaurant_id", restaurant_id)\
+                .execute()
+            
+            allergens_data = allergens_result.data
+            if not allergens_data:
+                continue
+
+            for allergen in allergens_data:
+                if (allergen.get('allergen', []) not in dish_allergens) and (allergen.get('allergen', []) != "Unknown"): 
+                    dish_allergens.append(allergen.get('allergen', []))
+
+        print("Allergens:", dish_allergens)
+
+        # Step 4: Return the list of dishes that match the search query
+        return Dish(
+            name=query,
+            ingredients=dish_ingredients,
+            allergens=dish_allergens,
+            restaurant_id=restaurant_id
+        ) 
+
     
     except HTTPException as http_exc:
         # If an HTTPException is raised, re-raise it
