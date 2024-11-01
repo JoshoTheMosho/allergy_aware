@@ -52,7 +52,7 @@
   border-radius: 0.75rem;
   cursor: pointer;
   transition: background 0.2s ease;
-  margin-left: 8px;
+  margin-left: 0px;
 }
 
 .search-button:hover {
@@ -75,5 +75,25 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 100%; /* Full width on smaller screens */
+    flex-direction: row; /* Stack elements vertically */
+    padding: 8px;
+  }
+
+  .search-input {
+    width: 100%; /* Full width input */
+    padding: 0.5rem;
+  }
+
+  .search-button {
+    width: 20%; /* Full width button */
+    margin-left: 0; /* Remove side margin */
+    padding: 0.5rem; /* Adjust padding for better fit */
   }
 }

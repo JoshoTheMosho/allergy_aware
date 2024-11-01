@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
-
 import axios from 'axios';
 import SearchBar from '../components/searchIngredients/SearchBar';
 import { Grid2, Card, CardContent, Typography } from '@mui/material';
@@ -59,15 +58,15 @@ const SearchPage = () => {
 
     return (
         <div className='demo-width'>
-            <SearchBar placeholder="Search for dishes" onSearch={handleSearch} loading={loading} />
-
-            {/* <h2 className="results-heading">Search Results</h2> */}
-            <Suspense fallback={<div>Loading...</div>}>
-                <SearchResults results={results} loading={loading} hasSearched={hasSearched} />
-
-            </Suspense>
+          <SearchBar placeholder="Search for dishes" onSearch={handleSearch} loading={loading} />
+    
+          {/* <h2 className="results-heading">Search Results</h2> */}
+          <Suspense fallback={<div>Loading...</div>}>
+            <SearchResults results={results} loading={loading} hasSearched={hasSearched} />
+    
+          </Suspense>
         </div>
-    );
+      );
 };
 
 //const SearchPage = ({ supabase }) => <SearchIngredients />;
