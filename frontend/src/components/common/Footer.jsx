@@ -7,7 +7,7 @@ const Footer = () => {
                 position: 'fixed',
                 bottom: 0,
                 width: '100%',
-                backgroundColor: 'primary.main',
+                background: 'linear-gradient(to right, rgb(78, 153, 238), #3153b3) !important;',
                 padding: '10px 0',
                 color: 'white',
                 textAlign: 'center',

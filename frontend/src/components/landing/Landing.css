@@ -26,6 +26,7 @@ body {
   align-items: center;
   width: 80%;
   padding-right: 20px;
+  padding-left: 20px;
 }
 
 .responsive-image {
@@ -114,8 +115,7 @@ body {
 
 .hero-subtitle {
   font-size: 1.3rem;
-  color: #2c313a;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-weight: 500;
 }
 
@@ -135,6 +135,7 @@ body {
   flex-direction: row;
   align-items: center;
   gap: 1rem;
+  padding-top: 0.5rem;
   /* padding-left: 4rem; */
 }
 
@@ -153,6 +154,48 @@ body {
   margin-top: 10px;
   color: #222222;
   text-align: center; /* Ensures centered text for larger screens */
+}
+
+/* Selling Points Section Styling */
+.selling-points {
+  margin-top: 0rem;
+  padding: 1rem 0;
+}
+
+.selling-points-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.selling-points-list {
+  list-style-type: none; /* Remove default bullets */
+  padding-left: 0;
+  margin: 0;
+}
+
+.selling-point {
+  font-size: 1.3rem; /* Text font size */
+  font-weight: 500;
+  color: #222222;
+  padding-left: 2.5rem; /* Increased space for larger bullet */
+  margin-bottom: 0.5rem;
+  position: relative;
+  text-align: left;
+}
+
+/* Custom gradient bullets */
+.selling-point::before {
+  content: "•";
+  font-size: 2.5rem; /* Larger bullet size */
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: -0.9rem; /* Slightly adjusted position to align with text */
+  background: linear-gradient(to right, #3f75eb, #3153b3); /* Gradient color */
+  -webkit-background-clip: text; /* Clip gradient to text */
+  -webkit-text-fill-color: transparent; /* Make text transparent to show gradient */
 }
 
 .price-size {

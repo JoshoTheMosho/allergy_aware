@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { ArrowRight, Download, Mail, Search, CheckCircle } from 'lucide-react';
+import { ArrowRight, Download, Clock, Search, CheckCircle } from 'lucide-react';
 import './Landing.css';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -9,76 +9,94 @@ const Landing = () => {
 
     const plans = [
       {
-        title: "Pro",
-        price: "$29",
+        title: "Demo",
+        price: "Free",
         features: [
-          "2000 verified emails",
-          "Unlimited exports",
-          "Unlimited active lists",
-          "Save Unlimited Leads",
-          "24/7 premium support"
+          "View Demo page",
+         
         ],
-        buttonText: "Choose Pro",
-        type: "enterprise"
+        buttonText: "Try Demo",
+        type: "demo"
       },
       {
-        title: "Starter",
-        price: "$9",
+        title: "Pro",
+        price: "$12",
         features: [
-          "500 verified emails",
-          "Unlimited exports",
-          "Unlimited active lists",
-          "Save Unlimited Leads",
+          "Unlimited Searches",
+          "50 Dishes",
+          "Unlimited Ingredients",
+          "Unlimited Allergens",
           "Priority support"
         ],
-        buttonText: "Choose Starter",
+        buttonText: "Choose Pro",
         type: "pro"
       },
       {
-        title: "Pro",
-        price: "$29",
+        title: "Enterprise",
+        price: "Contact Us",
         features: [
-          "2000 verified emails",
-          "Unlimited exports",
-          "Unlimited active lists",
-          "Save Unlimited Leads",
+          "Everything In Starter",
+          "Unlimited Dishes",
+          "Custom Integration",
+          "Priority Support",
           "24/7 premium support"
         ],
-        buttonText: "Choose Pro",
+        buttonText: "Choose Enterprise",
         type: "enterprise"
       }
     ];
+
+    const sellingPoints = [
+      "Easy to Use",
+      "Increase Backend Efficiency",
+      "Organized Menu Storage",
+      "Instant Access"
+    ];
+    
   return (
 
       <div className="landing">
         <main className="container">
-          <section className="hero">
-            <div className='hero-text'>
+        <section className="hero">
+          <div className="hero-text">
             <h1 className="hero-title">
-            <span className="highlight-gradient">Fewer Disruptions, </span>Faster Service
+              <span className="highlight-gradient">Fewer Disruptions, </span>Faster Service
             </h1>
             <p className="hero-subtitle">
-            Empower your staff with quick access to allergen and dietary details,<br />
-            <span className="highlight">minimizing kitchen interruptions and streamlining service!</span>
+              Empower your staff with quick access to allergen and dietary details, 
+              <span className="highlight"> minimizing kitchen interruptions and streamlining service!</span>
             </p>
-            <div className="button-group" >
-            {/* <Link className="button-36 cta-button" to="/leads">
-              Start Free Trial <ArrowRight className="icon" size={55}/>
-            </Link> */}
-            <Link className="button-36 cta-button" to="/search">
-              Start Now
-            </Link>
-            <Link className="button-36 watch-button" to="/demo">
-              Try Demo
-            </Link>
 
-            </div>
-            </div>
-            <div className="image-container">
-              <img src="https://res.cloudinary.com/djtccyord/image/upload/v1725743017/Untitled_design_6_ttsgcj.svg" className="responsive-image" alt="Showing chrome extensin exporting leads from linkedin sales navigator" />
-            </div>
-
+            {/* Key Selling Points Section */}
+            <section className="selling-points">
+              {/* <h2 className="selling-points-title">Why Choose AllerGenie?</h2> */}
+              <ul className="selling-points-list">
+                {sellingPoints.map((point, index) => (
+                  <li key={index} className="selling-point">
+                    {point}
+                  </li>
+                ))}
+              </ul>
             </section>
+
+            {/* Call-to-Action Buttons */}
+            <div className="button-group">
+              <Link className="button-36 cta-button" to="/search">
+                Start Now
+              </Link>
+              <Link className="button-36 watch-button" to="/demo">
+                Try Demo
+              </Link>
+            </div>
+          </div>
+          <div className="image-container">
+            <img
+              src="https://res.cloudinary.com/djtccyord/image/upload/v1730451227/allergine_search_jd4ch3.png"
+              className="responsive-image"
+              alt="Allergenie product in action"
+            />
+          </div>
+        </section>
 
             <div className="catch-phrase-container">
             <p className="catch-phrase">
@@ -92,32 +110,39 @@ const Landing = () => {
             <section className="features">
                 <div className="card">
                     <div className="card-content">
-                    <Download size={48} className="icon blue" />
-                    <h3 className="card-title">Instant Search</h3>
-                    <p className="card-description">
-                        Access allergen information instantly, reducing kitchen interruptions and allowing staff to respond quickly to allergen and dietary questions.
-                    </p>
+                        <Search size={48} className="icon blue" />
+                        <h3 className="card-title">Instant Search</h3>
+                        <ul className="card-description">
+                            <li>Access allergen information instantly</li>
+                            <li>Reduce kitchen interruptions</li>
+                            <li>Quick responses to dietary questions</li>
+                        </ul>
                     </div>
                 </div>
                 <div className="card">
                     <div className="card-content">
-                    <Mail size={48} className="icon purple" />
-                    <h3 className="card-title">Ingredient Tracking</h3>
-                    <p className="card-description">
-                        Store ingredient details efficiently, ensuring accurate allergen information for every dish and smoother service.
-                    </p>
+                        <Download size={48} className="icon purple" />
+                        <h3 className="card-title">Ingredient Storage</h3>
+                        <ul className="card-description">
+                            <li>Efficiently store ingredient details</li>
+                            <li>Ensure accurate allergen information</li>
+                            <li>Support smooth, informed service</li>
+                        </ul>
                     </div>
                 </div>
                 <div className="card">
                     <div className="card-content">
-                    <Search size={48} className="icon green" />
-                    <h3 className="card-title">Time Saving</h3>
-                    <p className="card-description">
-                        Reduce kitchen disruptions and speed up service with fast, reliable access to essential allergen details.
-                    </p>
+                        <Clock size={48} className="icon green" />
+                        <h3 className="card-title">Time Saving</h3>
+                        <ul className="card-description">
+                            <li>Reduce disruptions to kitchen staff</li>
+                            <li>Access allergen details quickly</li>
+                            <li>Speed up service times</li>
+                        </ul>
                     </div>
                 </div>
             </section>
+
 
 
           <section id="features" className="how-it-works">
@@ -133,7 +158,7 @@ const Landing = () => {
                   </p>
                 </div>
                 <div className="image-container">
-                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1723334622/Capture_qavgzv.png" alt="Chrome Extension in action" className="step-image" />
+                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730448100/allergenie_frontend_tqf6xi.png" alt="Chrome Extension in action" className="step-image" />
                 </div>
               </div>
               <div className="step">
@@ -145,7 +170,7 @@ const Landing = () => {
                   </p>
                 </div>
                 <div className="image-container-2">
-                  <img src="https://imagedelivery.net/Jqcuu6sMLVdLqUIvYQ7lqw/c8ee77f2-1183-41d0-d5b4-a0f0f25f5100/public" alt="Dashboard" className="step-image-2" />
+                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730448100/allergenie_frontend_tqf6xi.png" alt="Dashboard" className="step-image-2" />
                 </div>
               </div>
               <div className="step">
@@ -155,7 +180,7 @@ const Landing = () => {
                     Tagged dishes appear with clear allergen and ingredient details, allowing staff to respond confidently to guest inquiries.</p>
                 </div>
                 <div className="image-container-2">
-                  <img src="https://imagedelivery.net/Jqcuu6sMLVdLqUIvYQ7lqw/87195a64-2df7-4703-fc05-68f71e1d7700/public" alt="Email Templates" className="step-image-2" />
+                  <img src="https://res.cloudinary.com/djtccyord/image/upload/v1730451211/allergine_search_v2_iex6ga.png" alt="Email Templates" className="step-image-2" />
                 </div>
               </div>
             </div>
