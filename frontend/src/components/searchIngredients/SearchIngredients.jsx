@@ -20,7 +20,7 @@ const SearchIngredients = ({ onSearch, loading }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-            <Typography variant="h5" gutterBottom>Search Ingredients and Allergens</Typography>
+            <Typography variant="h5" gutterBottom>Search Dishes</Typography>
             <TextField
                 label="Search"
                 variant="outlined"
