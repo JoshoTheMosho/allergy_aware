@@ -143,6 +143,7 @@ const LoginForm = () => {
                     type="submit"
                     variant="contained"
                     color="primary"
+                    class="button-37"
                     fullWidth
                     sx={{ mt: 2 }}
                     disabled={loading}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Box, Paper, Typography, TextField, Button, IconButton, Autocomplete, Alert, CircularProgress } from '@mui/material';
 import { Remove } from '@mui/icons-material';
 import config from '../../config';
+import NotLoggedIn from '../components/common/NotLoggedIn';
 
 const EditPage = ({ token }) => {
     const [selectedDish, setSelectedDish] = useState(null);
@@ -124,6 +125,11 @@ const EditPage = ({ token }) => {
         setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
     };
 
+    const handleDeleteDish = async () => {
+        // Confirm you want to delete
+        return;
+    }
+
     const handleSaveDish = async () => {
         if (ingredients.length === 0) {
             setErrorMessage("At least one ingredient is required.");
@@ -178,6 +184,10 @@ const EditPage = ({ token }) => {
             (option) => !selectedIngredients.includes(option.label) || option.label === ingredients[currentIndex].ingredient
         );
     };
+
+    if (!token) {
+        return <NotLoggedIn />;
+    }
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3, pb: 15, backgroundColor: '#f5f5f5' }}>
@@ -237,8 +247,11 @@ const EditPage = ({ token }) => {
                                 </Box>
                             ))}
 
-                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                                <Button variant="contained" color="primary" onClick={handleSaveDish} disabled={isSaving} sx={{ width: '48%' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', 'gap': 2 }}>
+                                {/* <Button variant="contained" color="primary" class="button-38" onClick={handleDeleteDish} disabled={isSaving} sx={{ width: '48%' }}>
+                                    {isSaving ? "Deleting..." : "Delete Dish"}
+                                </Button> */}
+                                <Button variant="contained" color="primary" class="button-37" onClick={handleSaveDish} disabled={isSaving} sx={{ width: '48%' }}>
                                     {isSaving ? "Saving..." : "Save Dish"}
                                 </Button>
                             </Box>

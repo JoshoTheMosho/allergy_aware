@@ -45,7 +45,7 @@ function App() {
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/search" element={<SearchPage2 />} />
-                        <Route path="/edit" element={<EditPage />} />
+                        <Route path="/edit" element={<EditPage token={token} />} />
                         <Route path="/profile" element={<ComingSoon />} />
                         <Route path="/help" element={<ComingSoon />} />
                         <Route path="/privacy" element={<ComingSoon />} />
