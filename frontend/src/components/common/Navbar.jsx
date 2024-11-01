@@ -16,7 +16,7 @@ const Navbar = () => {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" className="custom-navbar">
             <Toolbar>
                 <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={handleMenuClick}>
                     <MenuIcon />

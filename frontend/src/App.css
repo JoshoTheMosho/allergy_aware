@@ -7,8 +7,8 @@
 
 /* Body styling */
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #f4f6f8;
+  font-family: "Inter", sans-serif;
+  background-color: #fdfdfd;
   color: #333;
   line-height: 1.6;
   min-height: 100vh;
@@ -26,6 +26,11 @@ body {
 /* Navbar Styling */
 .MuiAppBar-root {
   background-color: #1976d2; /* Adjust as per your theme */
+}
+/* Navbar.css */
+
+.custom-navbar {
+  background: linear-gradient(to right, rgb(78, 153, 238), #3153b3) !important;
 }
 
 /* Navbar button links */
@@ -63,13 +68,19 @@ footer a:hover {
 }
 
 /* Center content for search and edit pages */
-.SearchPage, .EditPage {
+.SearchPage,
+.EditPage {
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
+.demo-width {
+  padding-top: 2%;
+}
+.results-heading {
+  padding-left: 1%;
+}
 /* Form elements layout */
 form {
   display: flex;
@@ -90,7 +101,8 @@ form {
     padding: 20px;
   }
 
-  .SearchPage, .EditPage {
+  .SearchPage,
+  .EditPage {
     padding: 10px;
   }
 

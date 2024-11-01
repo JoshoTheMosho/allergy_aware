@@ -5,12 +5,12 @@ const Footer = () => {
         <Box
             component="footer"
             sx={{
-                position: 'fixed',
                 bottom: 0,
                 width: '100%',
                 backgroundColor: 'primary.main',
-                color: 'white',
+                background: 'linear-gradient(to right, rgb(78, 153, 238), #3153b3)',
                 padding: '10px 0',
+                color: 'white',
                 textAlign: 'center',
                 boxShadow: '0px -2px 10px rgba(0,0,0,0.2)'
             }}

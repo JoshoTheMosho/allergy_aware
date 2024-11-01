@@ -1,0 +1,72 @@
+/* ResultItem.css */
+
+.result-item {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 8px;
+  text-align: left;
+  max-width: 500px;
+  transition: transform 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+.result-item:hover {
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-title {
+  font-size: 1.2em;
+  margin-bottom: 8px;
+}
+
+.result-allergens h4 {
+  font-size: 1em;
+  margin-bottom: 4px;
+}
+
+.allergen-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.allergen-tag {
+  background-color: #e9f5ff;
+  color: #1d2022;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9em;
+}
+
+.toggle-ingredients-btn {
+  background: none;
+  border: none;
+  color: #3f51b5;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.result-ingredients {
+  margin-top: 8px;
+}
+
+.ingredient-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ingredient-tag {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9em;
+}
