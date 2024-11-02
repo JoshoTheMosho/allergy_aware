@@ -351,7 +351,7 @@ const EditPage = ({ token }) => {
                                     className="button-37"
                                     onClick={handleSaveDish}
                                     disabled={isSaving || isDeleting}
-                                    sx={{ marginLeft: 'auto' }} // This pushes the button to the far right
+                                    sx={{ marginLeft: 'auto' }}
                                 >
                                     {isSaving ? "Saving..." : "Save Dish"}
                                 </Button>
