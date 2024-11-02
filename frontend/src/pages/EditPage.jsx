@@ -60,7 +60,7 @@ const EditPage = ({ token }) => {
     
                 const { menu_item, ingredients: responseIngredients } = parsedData;
     
-                // Populate fields based on parsed response without changing `dishName`
+                // Populate fields based on parsed response
                 setEditedDishName(menu_item);
                 setIngredients(responseIngredients.map(ingredient => ({ ingredient, allergens: [] })));
                 setSuccessMessage("Dish populated successfully from image!");
@@ -73,6 +73,8 @@ const EditPage = ({ token }) => {
             setIsUploading(false);
         }
     };
+    
+    
     
     
     const fetchAvailableData = async () => {
@@ -103,12 +105,15 @@ const EditPage = ({ token }) => {
         try {
             const response = await fetch(`${config.backendUrl}/allergens/ingredients`, { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await response.json();
-            setAvailableIngredients(data);
+            setAvailableIngredients(data || []); // Set an empty array if data is null
         } catch {
             setErrorMessage("Failed to fetch ingredients.");
         }
     };
-
+    useEffect(() => {
+        console.log("Available Ingredients:", availableIngredients);
+    }, [availableIngredients]);
+    
     const fetchAvailableAllergens = async () => {
         try {
             const response = await fetch(`${config.backendUrl}/allergens/tags`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -347,12 +352,23 @@ const EditPage = ({ token }) => {
                                 <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 2 }}>
                                     <Autocomplete
                                         freeSolo
-                                        options={filteredAvailableIngredients(index)}
+                                        options={availableIngredients || []}
                                         value={item.ingredient || ''}
                                         onInputChange={(event, newValue) => handleIngredientChange(index, newValue)}
-                                        renderInput={(params) => <TextField {...params} label="Ingredient" variant="outlined" fullWidth required />}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Ingredient"
+                                                variant="outlined"
+                                                fullWidth
+                                                required
+                                            />
+                                        )}
                                         sx={{ flex: 2 }}
                                     />
+
+
+
                                     <Autocomplete
                                         freeSolo
                                         multiple
