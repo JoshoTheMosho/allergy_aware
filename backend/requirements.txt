@@ -3,3 +3,6 @@ pydantic==1.10.7
 supabase==2.9.0
 uvicorn==0.22.0
 python-dotenv==1.0.1
+openai
+google-cloud-vision
+python-multipart

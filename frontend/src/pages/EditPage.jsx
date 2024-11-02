@@ -18,6 +18,9 @@ const EditPage = ({ token }) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+    const [uploadedImage, setUploadedImage] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+
 
     const ingredientTemplate = { ingredient: '', allergens: [] };
 
@@ -29,6 +32,49 @@ const EditPage = ({ token }) => {
         }
     }, [token]);
 
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+    
+        setIsUploading(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+    
+        const formData = new FormData();
+        formData.append('file', file);
+    
+        try {
+            const response = await fetch(`${config.backendUrl}/ocr/process-menu-image/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Parse the JSON string in `data.data`
+                const parsedData = JSON.parse(data.data);
+    
+                const { menu_item, ingredients: responseIngredients } = parsedData;
+    
+                // Populate fields based on parsed response without changing `dishName`
+                setEditedDishName(menu_item);
+                setIngredients(responseIngredients.map(ingredient => ({ ingredient, allergens: [] })));
+                setSuccessMessage("Dish populated successfully from image!");
+            } else {
+                setErrorMessage("Failed to process image. Please try again.");
+            }
+        } catch (error) {
+            setErrorMessage("Error uploading image. Please try again.");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+    
+    
     const fetchAvailableData = async () => {
         try {
             setIsLoading(true);
@@ -246,6 +292,24 @@ const EditPage = ({ token }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3, pb: 15, backgroundColor: '#f5f5f5' }}>
+            {dishName === "Create Dish" && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+                <Button
+                    variant="contained"
+                    component="label"
+                    disabled={isUploading}
+                >
+                    {isUploading ? "Uploading..." : "Upload Image"}
+                    <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                    />
+                </Button>
+            </Box>
+            )}
+
             <Paper elevation={3} sx={{ width: '100%', maxWidth: '800px', p: 4, mt: 3, borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Typography variant="h5" component="h1" textAlign="center" gutterBottom>
                     Edit or Create Dish

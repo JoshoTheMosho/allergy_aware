@@ -24,9 +24,10 @@ body {
 }
 
 /* Navbar Styling */
-.MuiAppBar-root {
-  background-color: #1976d2; /* Adjust as per your theme */
-}
+/* .MuiAppBar-root {
+  background-color: #fcfcfc !important; 
+  color: #1d1a1a !important;
+} */
 /* Navbar.css */
 
 .custom-navbar {
@@ -77,6 +78,11 @@ footer a:hover {
 }
 .demo-width {
   padding-top: 2%;
+}
+@media (max-width: 768px) {
+  .demo-width {
+    padding: 0px 10px;
+  }
 }
 .results-heading {
   padding-left: 1%;
