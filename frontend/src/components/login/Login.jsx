@@ -70,7 +70,7 @@ const LoginForm = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    class="button-37"
+                    className="button-37"
                     fullWidth
                     onClick={() => {
                         window.location.href = '/search';
@@ -81,7 +81,7 @@ const LoginForm = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    class="button-37"
+                    className="button-37"
                     fullWidth
                     onClick={() => {
                         window.location.href = '/edit';
@@ -92,7 +92,7 @@ const LoginForm = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    class="button-37"
+                    className="button-37"
                     fullWidth
                     onClick={() => {
                         localStorage.removeItem('access_token');
@@ -156,7 +156,7 @@ const LoginForm = () => {
                     type="submit"
                     variant="contained"
                     color="primary"
-                    class="button-37"
+                    className="button-37"
                     fullWidth
                     sx={{ mt: 2 }}
                     disabled={loading}

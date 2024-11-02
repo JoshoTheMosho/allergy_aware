@@ -324,6 +324,51 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
         logger.error("Error fetching dish: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching dish")
 
+@router.delete("/dishes/{dishName}")
+def delete_dish(dishName: str, user=Depends(get_current_user)):
+    """
+    Delete a specific dish by its name for the user's restaurant.
+    """
+    logger.info("Attempting to delete dish: %s", dishName)
+
+    try:
+        # Step 1: Get the associated restaurant_id for the current user
+        user_result = supabase.table("users")\
+            .select("restaurant_id")\
+            .eq("id", user.user.id)\
+            .execute()
+
+        if not user_result.data:
+            logger.error("No restaurant associated with this user.")
+            raise HTTPException(status_code=404, detail="User has no associated restaurant.")
+
+        restaurant_id = user_result.data[0]['restaurant_id']
+
+        # Step 2: Check if the dish exists for the specified restaurant_id
+        dish_result = supabase.table("dishes")\
+            .select("name")\
+            .eq("restaurant_id", restaurant_id)\
+            .eq("name", dishName)\
+            .execute()
+
+        if not dish_result.data:
+            logger.warning("Dish '%s' not found for restaurant_id: %s", dishName, restaurant_id)
+            raise HTTPException(status_code=404, detail="Dish not found")
+
+        # Step 3: Delete the dish
+        delete_result = supabase.table("dishes")\
+            .delete()\
+            .eq("restaurant_id", restaurant_id)\
+            .eq("name", dishName)\
+            .execute()
+
+        logger.info(f'Successfully deleted dish {dishName} for restaurant_id: {restaurant_id}')
+        return {"message": f"Dish '{dishName}' successfully deleted"}
+
+    except Exception as e:
+        logger.error("Error deleting dish: %s", str(e))
+        raise HTTPException(status_code=500, detail="Error deleting dish")
+
 @router.get("/tags", response_model=List[str])
 def get_tags(user=Depends(get_current_user)):
     """
@@ -363,7 +408,7 @@ def get_tags(user=Depends(get_current_user)):
         ]
         
         # Combine the tag list with common allergens and deduplicate if necessary
-        return list(set(common_allergens + allergens))
+        return list(set(common_allergens + allergens) - {"Unknown"})
     except Exception as e:
         logger.error("Error fetching tags: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching tags")

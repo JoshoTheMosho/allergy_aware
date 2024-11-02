@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Paper, Typography, TextField, Button, IconButton, Autocomplete, Alert, CircularProgress } from '@mui/material';
+import { Box, Paper, Typography, TextField, Button, IconButton, Autocomplete, Alert, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Remove } from '@mui/icons-material';
 import config from '../../config';
 import NotLoggedIn from '../components/common/NotLoggedIn';
@@ -15,7 +15,11 @@ const EditPage = ({ token }) => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+
+    const ingredientTemplate = { ingredient: '', allergens: [] };
 
     useEffect(() => {
         if (token) {
@@ -40,7 +44,10 @@ const EditPage = ({ token }) => {
         try {
             const response = await fetch(`${config.backendUrl}/allergens/dishes`, { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await response.json();
-            setAvailableDishes(data.map((dish) => ({ label: dish })));
+            setAvailableDishes([
+                "Create Dish",
+                ...data
+            ]);
         } catch {
             setErrorMessage("Failed to fetch dishes.");
         }
@@ -50,7 +57,7 @@ const EditPage = ({ token }) => {
         try {
             const response = await fetch(`${config.backendUrl}/allergens/ingredients`, { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await response.json();
-            setAvailableIngredients(data.map((ingredient) => ({ label: ingredient })));
+            setAvailableIngredients(data);
         } catch {
             setErrorMessage("Failed to fetch ingredients.");
         }
@@ -67,51 +74,59 @@ const EditPage = ({ token }) => {
     };
 
     const fetchDishDetails = async (dishName) => {
+        if (dishName === 'Create Dish') {
+            setIngredients([{ ingredient: '', allergens: [] }]);
+            setEditedDishName('');
+            return;
+        }
+
         try {
             setIsLoading(true);
             const response = await fetch(`${config.backendUrl}/allergens/dishes/${dishName}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            const dishData = await response.json();
-            setEditedDishName(dishName);
-            // Ensure we have a ingredient template at the end
-            setIngredients(dishData ? [...dishData, { ingredient: '', allergens: [] }] : [{ ingredient: '', allergens: [] }]);
+            if (response.ok) {
+                const dishData = await response.json();
+                setEditedDishName(dishName);
+                setIngredients(dishData ? [...dishData, { ...ingredientTemplate }] : [{ ...ingredientTemplate }]);
+            } else {
+                setEditedDishName('');
+                setIngredients([{ ...ingredientTemplate }]);
+            }
         } catch {
-            setIngredients([{ ingredient: '', allergens: [] }]);
+            setIngredients([{ ...ingredientTemplate }]);
         } finally {
             setIsLoading(false);
-            setErrorMessage(null);
             setSuccessMessage(null);
+            setErrorMessage(null);
         }
     };
 
     const handleDishSelect = (event, newValue) => {
-        if (typeof newValue === 'string') {
+        if (newValue) {
             setDishName(newValue);
             setEditedDishName(newValue);
-            setSelectedDish(null);
-            setIngredients([{ ingredient: '', allergens: [] }]);
-        } else if (newValue && newValue.label) {
-            setEditedDishName(newValue.label);
             setSelectedDish(newValue);
-            fetchDishDetails(newValue.label);
+            fetchDishDetails(newValue);
         } else {
             setDishName('');
             setEditedDishName('');
-            setIngredients([{ ingredient: '', allergens: [] }]);
+            setIngredients([{ ...ingredientTemplate }]);
         }
-        setSuccessMessage(null);
-        setErrorMessage(null);
     };
 
     const handleIngredientChange = (index, newIngredient) => {
         setIngredients((prevIngredients) => {
             const updated = [...prevIngredients];
-            updated[index].ingredient = newIngredient ? newIngredient.label : '';
-            if (index === ingredients.length - 1 && newIngredient) {
-                updated.push({ ingredient: '', allergens: [] });
+            updated[index].ingredient = newIngredient ? newIngredient : '';
+
+            // Add a new ingredient template if the last index was modified and is not empty
+            if (index === updated.length - 1 && newIngredient) {
+                updated.push({ ...ingredientTemplate });
             }
+
             return updated;
         });
     };
+
 
     const handleAllergenChange = (index, newAllergens) => {
         setIngredients((prevIngredients) => {
@@ -126,19 +141,61 @@ const EditPage = ({ token }) => {
     };
 
     const handleDeleteDish = async () => {
-        // Confirm you want to delete
-        return;
+        setOpenDeleteConfirm(true);
+    };
+
+    const confirmDeleteDish = async () => {
+        setIsDeleting(true);
+        try {
+            const response = await fetch(`${config.backendUrl}/allergens/dishes/${selectedDish}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (response.ok) {
+                setSuccessMessage("Dish deleted successfully!");
+                setDishName('');
+                setIngredients([ingredientTemplate]);
+                setSelectedDish(null);
+                fetchAvailableData();
+            } else {
+                setErrorMessage("Error deleting dish. Please try again.");
+            }
+        } catch {
+            setErrorMessage("Error deleting dish. Please try again.");
+        } finally {
+            setIsDeleting(false);
+            setIsLoading(false);
+            setOpenDeleteConfirm(false);
+        }
+    };
+
+    const isInputSanitized = () => {
+        if (selectedDish === "" || !availableDishes.includes(selectedDish)) {
+            setErrorMessage("A valid dish must be selected to edit.");
+            return false;
+        }
+
+        if (editedDishName === "") {
+            setErrorMessage("A dish name is required.");
+            return false;
+        }
+
+        if (ingredients.length === 0) {
+            setErrorMessage("At least one ingredient is required.");
+            return false;
+        }
+
+        return true;
     }
 
     const handleSaveDish = async () => {
-        if (ingredients.length === 0) {
-            setErrorMessage("At least one ingredient is required.");
+        if (!isInputSanitized()) {
             return;
         }
 
         setIsSaving(true);
         const dishPayload = {
-            originalName: selectedDish ? selectedDish.label : '',
+            originalName: selectedDish ? selectedDish : '',
             newName: editedDishName,
             ingredients: ingredients
                 .filter((item) => item.ingredient) // Filter out items with no ingredient
@@ -147,8 +204,6 @@ const EditPage = ({ token }) => {
                     allergens: item.allergens || ['Unknown']
                 })),
         };
-
-        console.log(dishPayload);
 
         if (!dishPayload.newName || dishPayload.ingredients.some((item) => !item.ingredient)) {
             setErrorMessage("Dish name and ingredients are required.");
@@ -165,7 +220,7 @@ const EditPage = ({ token }) => {
             if (response.ok) {
                 setSuccessMessage("Dish saved successfully!");
                 setDishName('');
-                setIngredients([{ ingredient: '', allergens: [] }]);
+                setIngredients([{ ...ingredientTemplate }]);
                 setSelectedDish(null);
                 fetchAvailableData();
             } else {
@@ -202,7 +257,7 @@ const EditPage = ({ token }) => {
                     value={dishName}
                     onInputChange={(event, newValue) => setDishName(newValue)}
                     onChange={handleDishSelect}
-                    renderInput={(params) => <TextField {...params} label="Select or Create Dish Name" variant="outlined" fullWidth />}
+                    renderInput={(params) => <TextField {...params} label="Select or Create Dish" variant="outlined" fullWidth />}
                     sx={{ mb: 3 }}
                 />
 
@@ -214,7 +269,7 @@ const EditPage = ({ token }) => {
                     ) : (
                         <>
                             <TextField
-                                label="Edit Dish Name"
+                                label="Dish Name"
                                 variant="outlined"
                                 fullWidth
                                 value={editedDishName}
@@ -227,20 +282,40 @@ const EditPage = ({ token }) => {
                             {ingredients.map((item, index) => (
                                 <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 2 }}>
                                     <Autocomplete
+                                        freeSolo
                                         options={filteredAvailableIngredients(index)}
-                                        value={item.ingredient ? { label: item.ingredient } : null}
-                                        onChange={(event, newValue) => handleIngredientChange(index, newValue)}
+                                        value={item.ingredient || ''}
+                                        onInputChange={(event, newValue) => handleIngredientChange(index, newValue)}
                                         renderInput={(params) => <TextField {...params} label="Ingredient" variant="outlined" fullWidth required />}
                                         sx={{ flex: 2 }}
                                     />
                                     <Autocomplete
+                                        freeSolo
                                         multiple
                                         options={availableAllergens}
                                         value={item.allergens || []}
                                         onChange={(event, newValue) => handleAllergenChange(index, newValue)}
-                                        renderInput={(params) => <TextField {...params} label="Allergens" variant="outlined" placeholder="Select allergens" fullWidth />}
+                                        getOptionLabel={(option) => option}
+                                        isOptionEqualToValue={(option, value) => option === value}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Allergens"
+                                                variant="outlined"
+                                                placeholder="Select allergens"
+                                                fullWidth
+                                                onBlur={() => {
+                                                    const inputValue = params.inputProps.value.trim();
+                                                    if (inputValue && !item.allergens.includes(inputValue)) {
+                                                        handleAllergenChange(index, [...item.allergens, inputValue]);
+                                                    }
+                                                    params.inputProps.value = ''; // Clear the input field after handling
+                                                }}
+                                            />
+                                        )}
                                         sx={{ flex: 2 }}
                                     />
+
                                     <IconButton color="secondary" onClick={() => handleRemoveIngredient(index)} disabled={ingredients.length === 1}>
                                         <Remove />
                                     </IconButton>
@@ -248,10 +323,20 @@ const EditPage = ({ token }) => {
                             ))}
 
                             <Box sx={{ display: 'flex', justifyContent: 'center', 'gap': 2 }}>
-                                {/* <Button variant="contained" color="primary" class="button-38" onClick={handleDeleteDish} disabled={isSaving} sx={{ width: '48%' }}>
-                                    {isSaving ? "Deleting..." : "Delete Dish"}
-                                </Button> */}
-                                <Button variant="contained" color="primary" class="button-37" onClick={handleSaveDish} disabled={isSaving} sx={{ width: '48%' }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className="button-37"
+                                    style={{
+                                        backgroundImage: 'linear-gradient(92.88deg, #ff4f4f 9.16%, #ff2222 43.89%, #ff4f4f 64.72%)'
+                                    }}
+                                    onClick={handleDeleteDish}
+                                    disabled={isDeleting || isSaving}
+                                >
+                                    {isDeleting ? "Deleting..." : "Delete Dish"}
+                                </Button>
+
+                                <Button variant="contained" color="primary" className="button-37" onClick={handleSaveDish} disabled={isSaving || isDeleting}>
                                     {isSaving ? "Saving..." : "Save Dish"}
                                 </Button>
                             </Box>
@@ -263,7 +348,22 @@ const EditPage = ({ token }) => {
                 <Box sx={{ mb: 2 }} />
                 {errorMessage && <Alert severity="error" sx={{ mb: 2 }}>{errorMessage}</Alert>}
             </Paper>
-        </Box>
+            <Dialog open={openDeleteConfirm} onClose={() => setOpenDeleteConfirm(false)}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Are you sure you want to delete this dish?</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDeleteConfirm(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmDeleteDish} color="secondary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+        </Box >
     );
 };
 
