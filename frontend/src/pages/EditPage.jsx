@@ -316,27 +316,43 @@ const EditPage = ({ token }) => {
                                         sx={{ flex: 2 }}
                                     />
 
-                                    <IconButton color="secondary" onClick={() => handleRemoveIngredient(index)} disabled={ingredients.length === 1}>
+                                    <IconButton
+                                        color="secondary"
+                                        onClick={() => handleRemoveIngredient(index)}
+                                        disabled={
+                                            ingredients.length === 1 ||
+                                            (ingredients[index].ingredient === '' &&
+                                                index === ingredients.length - 1)
+                                        }
+                                    >
                                         <Remove />
                                     </IconButton>
                                 </Box>
                             ))}
 
-                            <Box sx={{ display: 'flex', justifyContent: 'center', 'gap': 2 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                {(selectedDish !== "Create Dish") &&
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        className="button-37"
+                                        style={{
+                                            backgroundImage: 'linear-gradient(92.88deg, #ff4f4f 9.16%, #ff2222 43.89%, #ff4f4f 64.72%)'
+                                        }}
+                                        onClick={handleDeleteDish}
+                                        disabled={isDeleting || isSaving}
+                                    >
+                                        {isDeleting ? "Deleting..." : "Delete Dish"}
+                                    </Button>
+                                }
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     className="button-37"
-                                    style={{
-                                        backgroundImage: 'linear-gradient(92.88deg, #ff4f4f 9.16%, #ff2222 43.89%, #ff4f4f 64.72%)'
-                                    }}
-                                    onClick={handleDeleteDish}
-                                    disabled={isDeleting || isSaving}
+                                    onClick={handleSaveDish}
+                                    disabled={isSaving || isDeleting}
+                                    sx={{ marginLeft: 'auto' }} // This pushes the button to the far right
                                 >
-                                    {isDeleting ? "Deleting..." : "Delete Dish"}
-                                </Button>
-
-                                <Button variant="contained" color="primary" className="button-37" onClick={handleSaveDish} disabled={isSaving || isDeleting}>
                                     {isSaving ? "Saving..." : "Save Dish"}
                                 </Button>
                             </Box>
