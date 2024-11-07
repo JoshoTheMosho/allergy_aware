@@ -104,6 +104,55 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
         # Raise an HTTP 500 error if an exception occurs
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/ingredientsData", response_model=List[dict])
+def get_ingredients_data(user=Depends(get_current_user)):
+    """
+    Returns a list of ingredients with their associated allergens.
+    """
+    logger.info("Fetching ingredients with allergens for user: %s", user.user.id)
+
+    try:
+        # Step 1: Query the "user" table to get the associated restaurant_id for the current user
+        user_result = supabase.table("users")\
+            .select("restaurant_id")\
+            .eq("id", user.user.id)\
+            .execute()
+        
+        logger.info("User Result: %s", user_result.data)
+
+        if not user_result.data:
+            logger.error("No restaurant associated with this user.")
+            raise HTTPException(status_code=404, detail="User has no associated restaurant.")
+
+        restaurant_id = user_result.data[0]['restaurant_id']
+        
+        # Step 2: Query the "ingredients" table for ingredients with allergens for the restaurant_id
+        ingredients_allergens_result = supabase.table("ingredients")\
+            .select("name, allergen")\
+            .eq("restaurant_id", restaurant_id)\
+            .execute()
+
+        logger.info("Ingredients Allergens Result: %s", ingredients_allergens_result.data)
+
+        if not ingredients_allergens_result.data:
+            return []
+
+        # Step 3: Organize the data into a dictionary with ingredients as keys and lists of allergens as values
+        ingredients_allergens = {}
+        for row in ingredients_allergens_result.data:
+            ingredient = row["name"]
+            allergen = row["allergen"]
+            if ingredient not in ingredients_allergens:
+                ingredients_allergens[ingredient] = []
+            ingredients_allergens[ingredient].append(allergen)
+
+        result = [{"ingredient": name, "allergens": allergens} for name, allergens in ingredients_allergens.items()]
+        return result
+
+    except Exception as e:
+        logger.error("Error fetching ingredient names: %s", str(e))
+        raise HTTPException(status_code=500, detail="Error fetching ingredient names")
+
 @router.get("/ingredients", response_model=List[str])
 def get_ingredient_names(user=Depends(get_current_user)):
     """

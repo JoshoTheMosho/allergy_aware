@@ -10,8 +10,9 @@ const EditPage = ({ token }) => {
     const [editedDishName, setEditedDishName] = useState('');
     const [ingredients, setIngredients] = useState([{ ingredient: '', allergens: [] }]);
     const [availableDishes, setAvailableDishes] = useState([]);
-    const [availableIngredients, setAvailableIngredients] = useState([]);
-    const [availableAllergens, setAvailableAllergens] = useState([]);
+    const [availableIngredientsData, setAvailableIngredientsData] = useState([]);
+    const [availableIngredients, setAvailableIngredients] = useState([]); // TODO deprecate
+    const [availableAllergens, setAvailableAllergens] = useState([]); // TODO deprecate
     const [errorMessage, setErrorMessage] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -25,15 +26,23 @@ const EditPage = ({ token }) => {
         if (token) {
             fetchAvailableData();
         } else {
-            setErrorMessage("Token is missing. Please log in.");
+            // redirect to /login if not logged in
+            window.location.href = '/login';
         }
     }, [token]);
 
     const fetchAvailableData = async () => {
         try {
             setIsLoading(true);
-            await Promise.all([fetchAvailableDishes(), fetchAvailableIngredients(), fetchAvailableAllergens()]);
+            await Promise.all([fetchAvailableDishes(), fetchAvailableAllergens(), fetchAvailableIngredientsData()]);
+
+            // TODO need to append available allergens to the ingredient data allergens -- ensure its unique
+
+            // TODO add a categories thing thats similar to the ingredients but saved differently...
+            // Not a required category
+
         } catch (error) {
+            console.log(error);
             setErrorMessage("Failed to fetch data. Please try again.");
         } finally {
             setIsLoading(false);
@@ -53,13 +62,13 @@ const EditPage = ({ token }) => {
         }
     };
 
-    const fetchAvailableIngredients = async () => {
+    const fetchAvailableIngredientsData = async () => {
         try {
-            const response = await fetch(`${config.backendUrl}/allergens/ingredients`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/ingredientsData`, { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await response.json();
-            setAvailableIngredients(data);
+            setAvailableIngredientsData(data);
         } catch {
-            setErrorMessage("Failed to fetch ingredients.");
+            setErrorMessage("Failed to fetch ingredients and allergens.");
         }
     };
 
@@ -114,19 +123,19 @@ const EditPage = ({ token }) => {
     };
 
     const handleIngredientChange = (index, newIngredient) => {
+        const ingredientData = availableIngredientsData.find((item) => item.ingredient === newIngredient) || { allergens: [] };
+    
         setIngredients((prevIngredients) => {
             const updated = [...prevIngredients];
-            updated[index].ingredient = newIngredient ? newIngredient : '';
-
-            // Add a new ingredient template if the last index was modified and is not empty
+            updated[index] = { ingredient: newIngredient, allergens: ingredientData.allergens };
+    
             if (index === updated.length - 1 && newIngredient) {
                 updated.push({ ...ingredientTemplate });
             }
-
+    
             return updated;
         });
     };
-
 
     const handleAllergenChange = (index, newAllergens) => {
         setIngredients((prevIngredients) => {
@@ -192,7 +201,16 @@ const EditPage = ({ token }) => {
         if (!isInputSanitized()) {
             return;
         }
-
+    
+        // Check for duplicate ingredients
+        const ingredientNames = ingredients.map((item) => item.ingredient);
+        const uniqueIngredients = new Set(ingredientNames);
+        if (uniqueIngredients.size !== ingredientNames.length) {
+            // Error message with ingredient causing issue
+            setErrorMessage("Cannot save with duplicate ingredients! Please check " + ingredientNames.find((item, index) => ingredientNames.indexOf(item) !== index));
+            return;
+        }
+    
         setIsSaving(true);
         const dishPayload = {
             originalName: selectedDish ? selectedDish : '',
@@ -204,13 +222,13 @@ const EditPage = ({ token }) => {
                     allergens: item.allergens || ['Unknown']
                 })),
         };
-
+    
         if (!dishPayload.newName || dishPayload.ingredients.some((item) => !item.ingredient)) {
             setErrorMessage("Dish name and ingredients are required.");
             setIsSaving(false);
             return;
         }
-
+    
         try {
             const response = await fetch(`${config.backendUrl}/allergens/dishes`, {
                 method: 'POST',
@@ -231,13 +249,17 @@ const EditPage = ({ token }) => {
         } finally {
             setIsSaving(false);
         }
-    };
+    };    
 
     const filteredAvailableIngredients = (currentIndex) => {
         const selectedIngredients = ingredients.map((item) => item.ingredient);
-        return availableIngredients.filter(
-            (option) => !selectedIngredients.includes(option.label) || option.label === ingredients[currentIndex].ingredient
-        );
+        return availableIngredientsData
+            .filter(
+                (option) =>
+                    !selectedIngredients.includes(option.ingredient) ||
+                    option.ingredient === ingredients[currentIndex].ingredient
+            )
+            .map(option => option.ingredient); // Extract only the ingredient name
     };
 
     if (!token) {
