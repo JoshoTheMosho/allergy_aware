@@ -1,5 +1,6 @@
 import { Container, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import './Common.css'
 
 const NotLoggedIn = () => {
     return (
@@ -13,7 +14,8 @@ const NotLoggedIn = () => {
             <Typography variant="body1" sx={{ mb: 3 }}>
                 Please log in to continue.
             </Typography>
-            <Button variant="contained" color="primary" component={Link} to="/login">
+            <Button variant="contained" color="primary" className="button-37"
+                component={Link} to="/login">
                 Log In
             </Button>
         </Container>

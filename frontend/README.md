@@ -45,7 +45,7 @@ The Allergy Management App is designed to help users manage and track allergens 
     npm run dev
     ```
 
-    The application will be available at `http://localhost:5173`.
+    The application will be available at `http://localhost:3000`.
 
 ## Project Structure
 

@@ -61,6 +61,7 @@ const LoginForm = () => {
                     borderRadius: 2,
                     boxShadow: 2,
                     mt: 5,
+                    gap: 2,
                 }}
             >
                 <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 3 }}>
@@ -69,6 +70,7 @@ const LoginForm = () => {
                 <Button
                     variant="contained"
                     color="primary"
+                    className="button-37"
                     fullWidth
                     onClick={() => {
                         window.location.href = '/search';
@@ -76,10 +78,21 @@ const LoginForm = () => {
                 >
                     Search
                 </Button>
-
                 <Button
                     variant="contained"
                     color="primary"
+                    className="button-37"
+                    fullWidth
+                    onClick={() => {
+                        window.location.href = '/edit';
+                    }}
+                >
+                    Edit
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className="button-37"
                     fullWidth
                     onClick={() => {
                         localStorage.removeItem('access_token');
@@ -143,6 +156,7 @@ const LoginForm = () => {
                     type="submit"
                     variant="contained"
                     color="primary"
+                    className="button-37"
                     fullWidth
                     sx={{ mt: 2 }}
                     disabled={loading}

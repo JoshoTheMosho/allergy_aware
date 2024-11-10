@@ -16,6 +16,7 @@ body {
   display: flex; /* Added to enable flexbox */
   flex-direction: column;
   align-items: center; /* Added to vertically center the content */
+  margin: 0px;
 }
 
 .image-container {
@@ -43,6 +44,9 @@ body {
   min-height: 100vh;
   background: #fdfdfd;
   padding-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Hero Section */
@@ -50,7 +54,7 @@ body {
   padding: 40px 20px 0;
   text-align: center;
   margin-bottom: 2rem;
-  width: 110%;
+  width: 120%;
 }
 
 .hero-text {
@@ -69,14 +73,18 @@ body {
 }
 
 @media (max-width: 768px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   .hero-title {
     font-size: 3rem;
     width: 105%;
   }
 
   .image-container {
-    max-width: 200rem;
-    padding-left: 10.5%;
+    width: 140%;
   }
 }
 
@@ -86,7 +94,7 @@ body {
   }
 
   .responsive-image {
-    max-width: 105%;
+    max-width: 95%;
     height: auto;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -448,7 +456,7 @@ body {
 }
 
 .step-image {
-  max-width: 100%;
+  max-width: 200%;
   height: auto;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -456,9 +464,11 @@ body {
 }
 
 .step-image-2 {
-  max-width: 100%;
+  max-width: 105%;
   height: auto;
-  border-radius: 0rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 @media (max-width: 768px) {
@@ -470,26 +480,29 @@ body {
   }
 
   .step {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
     gap: 0.5rem;
+    align-items: center;
   }
 
-  .text-container,
-  .image-container {
-    max-width: 100%;
+  .text-container {
+    width: 120%;
     order: unset;
+    padding-bottom: 10%;
   }
 
   .image-container-2 {
     margin-top: 0rem;
     padding-top: 0px;
-    width: 115%;
-    padding-right: 20px;
+    width: 135%;
+    /* padding-right: 20px; */
   }
 
   .step-image-2 {
-    width: 100%; /* Slightly larger on mobile */
+    width: 150%; /* Slightly larger on mobile */
   }
 }
 
@@ -499,8 +512,8 @@ body {
     grid-template-columns: 1fr 1fr;
   }
   .text-container {
-    max-width: 85%;
-    padding-left: 10rem;
+    max-width: 100%;
+    padding-left: 5rem;
   }
   .step-description {
     color: #4a5568;
