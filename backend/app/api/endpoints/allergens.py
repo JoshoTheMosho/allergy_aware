@@ -194,9 +194,10 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
     """
     original_name = dish_data.get("originalName")
     new_name = dish_data.get("newName")
+    category = dish_data.get("category")
     ingredients = dish_data.get("ingredients", [])
 
-    logger.info(f'Updating dish {original_name} to {new_name} with ingredients {ingredients}')
+    logger.info(f'Updating dish {original_name} to {new_name} in category {category} with ingredients {ingredients}')
 
     try:
         # Step 1: Get the user's associated restaurant_id
@@ -219,8 +220,54 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
             .execute()
 
         logger.info(f'Deleted dish {original_name} from dishes table')
+        category_id = None
+        
+        # Step 3: Update new dish name in categories table
+        if original_name != new_name:
+            update_dish_response = supabase.table("categories")\
+                .update({"dish_name": new_name})\
+                .eq("restaurant_id", restaurant_id)\
+                .eq("dish_name", original_name)\
+                .execute()
 
-        # Step 4: Delete then insert ingredients and associated allergens
+            logger.info(f'Updated dish name {original_name} to {new_name} in categories table')
+
+        # Step 4: Ensure the category exists & upsert the category
+        if category:
+            logger.info(f'Fetching category ID for restaurant_id {restaurant_id} and category {category}')
+
+            category_result = supabase.table("category_id").select("category_id").eq("category_name", category).execute()
+
+            if not category_result.data:
+                logger.info(f'Category {category} does not exist in category_id. Inserting category {category} for restaurant_id {restaurant_id}')
+
+                # Create a category
+                category_insert_response = supabase.table("category_id")\
+                    .insert({'category_name': category, 'restaurant_id': restaurant_id})\
+                    .execute()
+                category_id = category_insert_response.data[0]['category_id']            
+            else:
+                category_id = category_result.data[0]['category_id'] 
+
+        if category_id:
+            logger.info(f'Upserting category {category} with category_id {category_id} for dish {new_name}')
+
+            # Upsert category into category table
+            category_upsert_response = supabase.table("categories")\
+                .upsert({'category': category, 'category_id': category_id, 'dish_name': new_name, 'restaurant_id': restaurant_id})\
+                .execute()
+            
+            logger.info(f'Upserted category {category} for dish {new_name}')
+        else:
+            logger.info(f'Clearing category for dish {new_name}')
+
+            category_delete_response = supabase.table("categories")\
+                .delete()\
+                .eq("restaurant_id", restaurant_id)\
+                .eq("dish_name", new_name)\
+                .execute()
+
+        # Step 5: Delete then insert ingredients and associated allergens
         for ingredient in ingredients:
             ingredient_name = ingredient["ingredient"]
             allergens = ingredient.get("allergens", ["Unknown"])
@@ -461,3 +508,74 @@ def get_tags(user=Depends(get_current_user)):
     except Exception as e:
         logger.error("Error fetching tags: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching tags")
+
+@router.get("/categories", response_model=List[str])
+def get_categories(user=Depends(get_current_user)):
+    """
+    Returns a list of category names for the user's restaurant.
+    """
+    logger.info("Fetching categories for user: %s", user.user.id)
+
+    try:
+        # Step 1: Query the "user" table to get the associated restaurant_id for the current user
+        user_result = supabase.table("users")\
+            .select("restaurant_id")\
+            .eq("id", user.user.id)\
+            .execute()
+        
+        logger.info("User Result: %s", user_result.data)
+
+        if not user_result.data:
+            logger.error("No restaurant associated with this user.")
+            raise HTTPException(status_code=404, detail="User has no associated restaurant.")
+
+        restaurant_id = user_result.data[0]['restaurant_id']
+        
+        # Step 2: Fetch the list of category names
+        category_results = supabase.table("category_id")\
+            .select("category_name")\
+            .eq("restaurant_id", restaurant_id)\
+            .execute()
+        
+        categories = list({category['category_name'] for category in category_results.data})
+
+        return categories
+    except Exception as e:
+        logger.error("Error fetching categories: %s", str(e))
+        raise HTTPException(status_code=500, detail="Error fetching categories")
+
+@router.get("/categories/{dish_name}", response_model=str)
+def get_dish_category(dish_name: str, user=Depends(get_current_user)):
+    """
+    Returns the category a dish is under.
+    """
+    logger.info("Fetching categories for user: %s", user.user.id)
+
+    try:
+        # Step 1: Query the "user" table to get the associated restaurant_id for the current user
+        user_result = supabase.table("users")\
+            .select("restaurant_id")\
+            .eq("id", user.user.id)\
+            .execute()
+        
+        if not user_result.data:
+            logger.error("No restaurant associated with this user.")
+            raise HTTPException(status_code=404, detail="User has no associated restaurant.")
+
+        restaurant_id = user_result.data[0]['restaurant_id']
+
+        logger.info("Fetching category name for dish: %s", dish_name)
+        
+        # Step 2: Fetch the category name
+        category = supabase.table("categories")\
+            .select("category")\
+            .eq("restaurant_id", restaurant_id)\
+            .eq("dish_name", dish_name)\
+            .execute()
+        
+        logger.info("Category Result: %s", category.data)
+
+        return category.data[0]['category'] if category.data else ''
+    except Exception as e:
+        logger.error(f"Error fetching category for {dish_name}: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching categories")
