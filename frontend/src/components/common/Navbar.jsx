@@ -31,7 +31,7 @@ const Navbar = () => {
                         component={Link}
                         to="/">
                         <img
-                            src="src/assets/AllerGenie_upscaled_removebg_white.png"
+                            src="https://res.cloudinary.com/dbujg1qso/image/upload/f_auto,q_auto/y8jjl4z9pe63ecy2vjwk"
                             alt="AllerGenie Logo"
                             className="logo-image"
                         />
