@@ -147,7 +147,7 @@ def get_ingredients_data(user=Depends(get_current_user)):
             ingredients_allergens[ingredient].append(allergen)
 
         result = [{"ingredient": name, "allergens": allergens} for name, allergens in ingredients_allergens.items()]
-        return result
+        return result or [{}]
 
     except Exception as e:
         logger.error("Error fetching ingredient names: %s", str(e))
@@ -182,7 +182,7 @@ def get_ingredient_names(user=Depends(get_current_user)):
             .execute()
         
         ingredient_names = list({ingredient['name'] for ingredient in ingredient_names.data})
-        return ingredient_names
+        return ingredient_names or []
     except Exception as e:
         logger.error("Error fetching ingredient names: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching ingredient names")
@@ -335,7 +335,7 @@ def get_dish_names(user=Depends(get_current_user)):
             .execute()
         
         dish_names = list({dish['name'] for dish in dish_result.data})
-        return dish_names
+        return sorted(dish_names) or []
     except Exception as e:
         logger.error("Error fetching dish names: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching dish names")
@@ -539,7 +539,7 @@ def get_categories(user=Depends(get_current_user)):
         
         categories = list({category['category_name'] for category in category_results.data})
 
-        return categories
+        return categories or []
     except Exception as e:
         logger.error("Error fetching categories: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching categories")

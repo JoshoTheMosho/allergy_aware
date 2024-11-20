@@ -105,8 +105,12 @@ const EditPage = ({ token }) => {
     };
 
     const fetchDishDetails = async (dishName) => {
+        setSuccessMessage('');
+        setErrorMessage('');
+
         if (dishName === 'Create Dish') {
             setIngredients([{ ingredient: '', allergens: [] }]);
+            setSelectedCategory('');
             setEditedDishName('');
             return;
         }
@@ -124,7 +128,8 @@ const EditPage = ({ token }) => {
                 setEditedDishName('');
                 setIngredients([{ ...ingredientTemplate }]);
             }
-        } catch {
+        } catch (error) {
+            console.log("Caught error while fetching dish details: ", error);
             setIngredients([{ ...ingredientTemplate }]);
         } finally {
             setIsLoading(false);
