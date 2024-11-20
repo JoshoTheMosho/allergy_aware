@@ -117,6 +117,7 @@ body {
 
 .highlight-gradient {
   background: linear-gradient(to right, #3f75eb, #3153b3);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -202,6 +203,7 @@ body {
   left: 0;
   top: -0.9rem; /* Slightly adjusted position to align with text */
   background: linear-gradient(to right, #3f75eb, #3153b3); /* Gradient color */
+  background-clip: text; /* Clip gradient to text */
   -webkit-background-clip: text; /* Clip gradient to text */
   -webkit-text-fill-color: transparent; /* Make text transparent to show gradient */
 }
@@ -225,6 +227,7 @@ body {
 
 .gradient {
   background: linear-gradient(to right, #3f75eb, #3153b3);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
