@@ -6,7 +6,7 @@ from ..dependencies.get_user import get_current_user
 from ...schemas.dish import Dish
 from ...schemas.ingredient import Ingredient
 from ...schemas.restaurant import Restaurant
-from ...schemas.ingredientWithAllergen import IngredientWithAllergens
+from ...schemas.ingredientWithAllergens import IngredientWithAllergens
 import logging
 
 # Set up logging
