@@ -1,0 +1,112 @@
+/* General resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #fdfdfd;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App container (to ensure consistent padding) */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar Styling */
+.MuiAppBar-root {
+  background-color: #1976d2; /* Adjust as per your theme */
+}
+/* Navbar.css */
+
+.custom-navbar {
+  background: linear-gradient(to right, rgb(78, 153, 238), #3153b3) !important;
+}
+
+/* Navbar button links */
+.MuiButton-root {
+  text-transform: none; /* Removes all uppercase from MUI buttons */
+}
+
+/* Footer Styling */
+footer {
+  background-color: #1976d2;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Footer Links */
+footer a {
+  color: white;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Page Specific Styles */
+
+/* Landing Page */
+.Landing {
+  padding: 40px;
+  text-align: center;
+}
+
+/* Center content for search and edit pages */
+.SearchPage,
+.EditPage {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.demo-width {
+  padding-top: 2%;
+}
+.results-heading {
+  padding-left: 1%;
+}
+/* Form elements layout */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Button styling */
+.MuiButton-containedPrimary {
+  background-color: #1976d2;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+  .Landing {
+    padding: 20px;
+  }
+
+  .SearchPage,
+  .EditPage {
+    padding: 10px;
+  }
+
+  footer {
+    font-size: 14px;
+  }
+}

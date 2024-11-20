@@ -1,0 +1,27 @@
+/* src/components/ResultsList/ResultsList.css */
+.search-results-container {
+  padding: 2% 2%;
+}
+.results-container {
+  width: 100%;
+  padding: 1rem; /* p-4 */
+  display: flex;
+  flex-direction: row;
+}
+/* src/components/ResultsList/ResultsList.css */
+
+/* src/components/ResultsList/ResultsList.css */
+
+.results-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+  gap: 20px; /* Spacing between the items */
+}
+
+@media (max-width: 768px) {
+  .results-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); /* 2 items per row */
+    gap: 20px; /* Spacing between the items */
+  }
+}

@@ -1,0 +1,42 @@
+services:
+  fastapi:
+    build: ./backend
+    container_name: fastapi-app
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fastapi.rule=Host(`api.${FRONTEND_URL}`)"
+      - "traefik.http.services.fastapi.loadbalancer.server.port=8000"
+
+  react:
+    build: ./frontend
+    container_name: react-app
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.react.rule=Host(`${FRONTEND_URL}`)"
+      - "traefik.http.services.react.loadbalancer.server.port=80"
+
+  traefik:
+    image: "traefik:v2.9"
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"  # Traefik dashboard
+    networks:
+      - web
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+networks:
+  web:
+    external: false
