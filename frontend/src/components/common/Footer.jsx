@@ -17,7 +17,8 @@ const Footer = () => {
                     © {new Date().getFullYear()} AllergyApp. All rights reserved.
                 </Typography>
                 <Typography variant="body2">
-                    <Link href="/privacy" color="inherit" underline="hover">Privacy Policy</Link> |
+                    <Link href="/privacy" color="inherit" underline="hover">Privacy Policy</Link>
+                    {' | '}
                     <Link href="/terms" color="inherit" underline="hover">Terms of Service</Link>
                 </Typography>
             </Container>

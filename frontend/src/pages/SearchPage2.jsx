@@ -117,13 +117,13 @@ const SearchPage = () => {
                     </Button>
                 ))}
             </Box>
-            <Box sx={{ marginTop: '20px', maxHeight: '400px', overflowY: 'auto' }}>
+            <Box sx={{ marginTop: '20px', maxHeight: 'auto', overflowY: 'auto' }}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <SearchResults results={results} loading={loading} />
                 </Suspense>
             </Box>
         </div>
-      );
+    );
 };
 
 //const SearchPage = ({ supabase }) => <SearchIngredients />;
