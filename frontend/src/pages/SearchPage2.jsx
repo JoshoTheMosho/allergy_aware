@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import React, { Suspense } from 'react';
-
+import { Suspense } from 'react';
 import axios from 'axios';
 import SearchBar from '../components/searchIngredients/SearchBar';
 import { Grid2, Card, CardContent, Typography, Button, Collapse, Box } from '@mui/material';

@@ -1,4 +1,4 @@
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography, Container, Link } from '@mui/material';
 
 const Footer = () => {
     return (
@@ -9,6 +9,7 @@ const Footer = () => {
                 padding: '10px 0',
                 color: 'white',
                 textAlign: 'center',
+                boxShadow: '0px -2px 10px rgba(0,0,0,0.2)'
             }}
         >
             <Container>
@@ -16,7 +17,8 @@ const Footer = () => {
                     © {new Date().getFullYear()} AllergyApp. All rights reserved.
                 </Typography>
                 <Typography variant="body2">
-                    <a href="/privacy" style={{ color: 'white', textDecoration: 'none' }}>Privacy Policy</a> | <a href="/terms" style={{ color: 'white', textDecoration: 'none' }}>Terms of Service</a>
+                    <Link href="/privacy" color="inherit" underline="hover">Privacy Policy</Link> |
+                    <Link href="/terms" color="inherit" underline="hover">Terms of Service</Link>
                 </Typography>
             </Container>
         </Box>
