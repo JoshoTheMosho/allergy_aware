@@ -50,8 +50,8 @@ def get_all_dishes(unique_dish_names, dishes_result, restaurant_id):
     
     return dishes
 
-
 def get_all_dishes_from_ingredients(dishes_result, ingredients_data):
+    # Assisted with AI tools to optimize the code
     # Build a mapping from dish name to list of ingredients
     dish_ingredients = {}
     for dish in dishes_result.data:
@@ -228,6 +228,7 @@ def get_dishes_by_category(category_name: str = Query(..., title="Category Name"
     Retrieve dishes for the authenticated user's restaurant filtered by category.
     """
     try:
+        # Get user's restaurant ID
         user_result = supabase.table("users")\
             .select("restaurant_id")\
             .eq("id", user.user.id)\
@@ -238,31 +239,81 @@ def get_dishes_by_category(category_name: str = Query(..., title="Category Name"
 
         restaurant_id = user_result.data[0]['restaurant_id']
 
-        # Fetch dishes by category
-        dishes_result = supabase.table("categories")\
-            .select("*")\
+        # Assisted with AI tools to optimize the code
+        # Fetch dish names in the specified category
+        category_dishes_result = supabase.table("categories")\
+            .select("dish_name")\
             .eq("restaurant_id", restaurant_id)\
             .eq("category", category_name)\
             .execute()
 
-        if not dishes_result.data:
-            return []  # Or raise an exception if no dishes found as a business rule
-        
-        unique_dish_names = set()
-        for dish in dishes_result.data:
-            dish_name = dish.get('dish_name', [])
-            if dish_name not in unique_dish_names:
-                unique_dish_names.add(dish_name)
+        if not category_dishes_result.data:
+            return []
 
-        # Fetch all dishes
-        dishes_result_1 = supabase.table("dishes")\
+        dish_names = [dish['dish_name'] for dish in category_dishes_result.data]
+
+        # Fetch dishes with the selected names
+        dishes_result = supabase.table("dishes")\
+            .select("*")\
+            .in_("name", dish_names)\
+            .eq("restaurant_id", restaurant_id)\
+            .execute()
+
+        if not dishes_result.data:
+            return []
+
+        # Fetch all ingredients for the restaurant
+        ingredients_result = supabase.table("ingredients")\
             .select("*")\
             .eq("restaurant_id", restaurant_id)\
             .execute()
 
-        dishes = get_all_dishes(unique_dish_names, dishes_result_1, restaurant_id)
-        return dishes
+        if not ingredients_result.data:
+            return []
 
+        # Build mappings for quick lookups
+        ingredient_allergens = {
+            ingredient['name'].lower(): ingredient['allergen']
+            for ingredient in ingredients_result.data
+            if ingredient['allergen'] != "Unknown"
+        }
+
+        # Build a mapping from dish name to its ingredients and allergens
+        dishes_dict = {}
+        for dish in dishes_result.data:
+            dish_name = dish.get('name', '')
+            ingredient = dish.get('ingredient', '')
+            ingredient_lower = ingredient.lower()
+
+            # Initialize the dish entry if it doesn't exist
+            if dish_name not in dishes_dict:
+                dishes_dict[dish_name] = {
+                    'ingredients': [],
+                    'allergens': set()
+                }
+
+            # Add the ingredient to the dish's ingredient list
+            dishes_dict[dish_name]['ingredients'].append(ingredient)
+
+            # Find the allergen for the ingredient, if any
+            for ing_name, allergen in ingredient_allergens.items():
+                if ingredient_lower == ing_name:
+                    dishes_dict[dish_name]['allergens'].add(allergen)
+                    break  # Found the allergen, no need to check further
+
+        # Build the list of Dish objects
+        dishes = []
+        for dish_name, data in dishes_dict.items():
+            dishes.append(Dish(
+                name=dish_name,
+                ingredients=data['ingredients'],
+                allergens=list(data['allergens']),
+                restaurant_id=restaurant_id
+            ))
+
+
+        return dishes
+    
     except HTTPException as http_exc:
         # If an HTTPException is raised, re-raise it
         raise http_exc
