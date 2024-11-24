@@ -12,6 +12,8 @@ const SearchPage = () => {
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [expanded, setExpanded] = useState({});
+    const [searchCategory, setSearchCategory] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -27,6 +29,8 @@ const SearchPage = () => {
 
     const fetchAllDishes = async (authToken) => {
         setLoading(true);
+        setSearchTerm('');
+        setSearchCategory('All');
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/all_dishes/`, {
                 headers: {
@@ -55,6 +59,8 @@ const SearchPage = () => {
 
     const fetchDishesByCategory = async (category) => {
         setLoading(true);
+        setSearchTerm('');
+        setSearchCategory(category);
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/dishes_by_category/`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -79,6 +85,8 @@ const SearchPage = () => {
         setResults([]);
         setLoading(true);
         setHasSearched(true);
+        setSearchCategory('')
+        setSearchTerm(query);
 
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/search/`, {
@@ -90,7 +98,7 @@ const SearchPage = () => {
                 }
             });
 
-            setResults([response.data]); // Wrap in array to match `map` function on single item
+            setResults(response.data); // Wrap in array to match `map` function on single item
 
         } catch (err) {
             console.error('An error occurred while fetching data:', err);
@@ -108,11 +116,20 @@ const SearchPage = () => {
         <div className='demo-width'>
             <SearchBar placeholder="Search for dishes" onSearch={handleSearch} loading={loading} />
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 2 }}>
-                <Button variant="contained" color="primary" onClick={() => fetchAllDishes(token)}>
+                <Button
+                    variant="contained"
+                    color={searchCategory === 'All' ? "secondary" : "primary"}
+                    onClick={() => fetchAllDishes(token)}
+                >
                     All
                 </Button>
                 {categories.map((category, index) => (
-                    <Button key={index} variant="contained" onClick={() => fetchDishesByCategory(category)}>
+                    <Button
+                        key={index}
+                        variant="contained"
+                        color={searchCategory === category ? "secondary" : "primary"}
+                        onClick={() => fetchDishesByCategory(category)}
+                    >
                         {category}
                     </Button>
                 ))}

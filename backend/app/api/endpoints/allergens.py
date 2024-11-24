@@ -86,7 +86,7 @@ def get_all_dishes_from_ingredients(dishes_result, ingredients_data):
     return dishes
 
 
-@router.get("/search/", response_model=Dish)
+@router.get("/search/", response_model=List[Dish])
 def search_ingredients(query: str = Query(..., title="Query", description="Search by dish name"), user=Depends(get_current_user)):
     """
     Search for dishes based on dish name.
@@ -114,7 +114,6 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
         if not user_result.data:
             raise HTTPException(status_code=404, detail="User or restaurant not found")
 
-        #restaurant_id = user_result.data["restaurant_id"]
         restaurant_id = user_result.data[0]['restaurant_id']
 
         # Step 2: Query the dishes table based on the queried dish name
@@ -129,34 +128,46 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
         if not dishes_data:
             return []
         
-        dish_ingredients = []
+        dish_ingredients = {}
         for dish in dishes_data:
-            dish_ingredients.append(dish.get('ingredient', []))
+            dish_name = dish.get('name', '')
+            ingredient = dish.get('ingredient', '')
+            dish_ingredients.setdefault(dish_name, []).append(ingredient)
         
-        # Step 3: Query the ingredients table to get the list of allergens associated with the dish
-        dish_allergens = []
-        for ingredient in dish_ingredients:
-            allergens_result = supabase.table("ingredients")\
-                .select("*")\
-                .ilike("name", f"%{ingredient}%")\
-                .eq("restaurant_id", restaurant_id)\
-                .execute()
-            
-            allergens_data = allergens_result.data
-            if not allergens_data:
-                continue
+        # Step 3: Fetch all ingredients for the restaurant
+        ingredients_result = supabase.table("ingredients")\
+            .select("*")\
+            .eq("restaurant_id", restaurant_id)\
+            .execute()
 
-            for allergen in allergens_data:
-                if (allergen.get('allergen', []) not in dish_allergens) and (allergen.get('allergen', []) != "Unknown"): 
-                    dish_allergens.append(allergen.get('allergen', []))
+        ingredients_data = ingredients_result.data or []
 
-        # Step 4: Return the list of dishes that match the search query
-        return Dish(
-            name=query,
-            ingredients=dish_ingredients,
-            allergens=dish_allergens,
-            restaurant_id=restaurant_id
-        ) 
+        # Step 4: Build a mapping from ingredient name to allergen
+        ingredient_allergens = {
+            ingredient['name'].lower(): ingredient['allergen']
+            for ingredient in ingredients_data
+            if ingredient['allergen'] != "Unknown"
+        }
+
+
+        # Step 5: Build the list of Dish objects
+        dishes = []
+        for dish_name, ingredients_list in dish_ingredients.items():
+            dish_allergens = set()
+            for ingredient in ingredients_list:
+                ingredient_lower = ingredient.lower()
+                # Find the allergen for the ingredient, if any
+                allergen = ingredient_allergens.get(ingredient_lower)
+                if allergen:
+                    dish_allergens.add(allergen)
+            dishes.append(Dish(
+                name=dish_name,
+                ingredients=ingredients_list,
+                allergens=list(dish_allergens),
+                restaurant_id=restaurant_id
+            ))
+
+        return dishes
 
     
     except HTTPException as http_exc:
