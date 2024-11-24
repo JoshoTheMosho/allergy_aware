@@ -51,6 +51,41 @@ def get_all_dishes(unique_dish_names, dishes_result, restaurant_id):
     return dishes
 
 
+def get_all_dishes_from_ingredients(dishes_result, ingredients_data):
+    # Build a mapping from dish name to list of ingredients
+    dish_ingredients = {}
+    for dish in dishes_result.data:
+        dish_name = dish.get('name', '')
+        ingredient = dish.get('ingredient', '')
+        dish_ingredients.setdefault(dish_name, []).append(ingredient)
+
+    # Build a mapping from ingredient name to allergen
+    ingredient_allergens = {}
+    for ingredient_row in ingredients_data:
+        ingredient_name = ingredient_row.get('name', '').lower()
+        allergen = ingredient_row.get('allergen', '')
+        if allergen != "Unknown":
+            ingredient_allergens[ingredient_name] = allergen
+
+    # Build the list of Dish objects
+    dishes = []
+    for dish_name, ingredients_list in dish_ingredients.items():
+        dish_allergens = set()
+        for ingredient in ingredients_list:
+            # Find matching allergens for each ingredient
+            for ing_name, allergen in ingredient_allergens.items():
+                if ingredient.lower() in ing_name:
+                    dish_allergens.add(allergen)
+        dishes.append(Dish(
+            name=dish_name,
+            ingredients=ingredients_list,
+            allergens=list(dish_allergens),
+            restaurant_id=dishes_result.data[0]['restaurant_id']
+        ))
+
+    return dishes
+
+
 @router.get("/search/", response_model=Dish)
 def search_ingredients(query: str = Query(..., title="Query", description="Search by dish name"), user=Depends(get_current_user)):
     """
@@ -160,15 +195,29 @@ def all_dishes(user=Depends(get_current_user)):
         if not dishes_data:
             return []
         
-        unique_dish_names = set()
-        for dish in dishes_result.data:
-            dish_name = dish.get('name', [])
-            if dish_name not in unique_dish_names:
-                unique_dish_names.add(dish_name)
+        # unique_dish_names = set()
+        # for dish in dishes_result.data:
+        #     dish_name = dish.get('name', [])
+        #     if dish_name not in unique_dish_names:
+        #         unique_dish_names.add(dish_name)
     
-        dishes = get_all_dishes(unique_dish_names, dishes_result, restaurant_id)
+        # dishes = get_all_dishes(unique_dish_names, dishes_result, restaurant_id)
+        # return dishes
+
+        # Fetch all ingredients for the restaurant
+        ingredients_result = supabase.table("ingredients")\
+            .select("*")\
+            .eq("restaurant_id", restaurant_id)\
+            .execute()
+
+        if not ingredients_result.data:
+            return []
+
+        # Get all dishes with optimized processing
+        dishes = get_all_dishes_from_ingredients(dishes_result, ingredients_result.data)
         return dishes
-    
+
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
