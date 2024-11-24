@@ -12,23 +12,23 @@ import ComingSoon from './components/common/ComingSoon';
 import './App.css';
 
 function App() {
-    const [token, setToken] = useState('');
+    // const [token, setToken] = useState('');
 
-    useEffect(() => {
-        // Example: Fetch and set the auth token from Supabase or localStorage if logged in
-        // Replace with actual implementation based on how your authentication works
-        const fetchAuthToken = async () => {
-            // Assuming token is stored in localStorage after login
-            const authToken = localStorage.getItem('access_token');
-            if (authToken) {
-                setToken(authToken);
-            } else {
-                console.error("No token found");
-            }
-        };
+    // useEffect(() => {
+    //     // Example: Fetch and set the auth token from Supabase or localStorage if logged in
+    //     // Replace with actual implementation based on how your authentication works
+    //     const fetchAuthToken = async () => {
+    //         // Assuming token is stored in localStorage after login
+    //         const authToken = localStorage.getItem('access_token');
+    //         if (authToken) {
+    //             setToken(authToken);
+    //         } else {
+    //             console.error("No token found");
+    //         }
+    //     };
 
-        fetchAuthToken();
-    }, []);
+    //     fetchAuthToken();
+    // }, []);
 
     return (
         <Router>
@@ -45,7 +45,7 @@ function App() {
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/search" element={<SearchPage2 />} />
-                        <Route path="/edit" element={<EditPage token={token} />} />
+                        <Route path="/edit" element={<EditPage />} />
                         <Route path="/profile" element={<ComingSoon />} />
                         <Route path="/help" element={<ComingSoon />} />
                         <Route path="/privacy" element={<ComingSoon />} />

@@ -4,7 +4,7 @@ import { Remove } from '@mui/icons-material';
 import config from '../../config';
 import NotLoggedIn from '../components/common/NotLoggedIn';
 
-const EditPage = ({ token }) => {
+const EditPage = () => {
     const [selectedDish, setSelectedDish] = useState(null);
     const [dishName, setDishName] = useState('');
     const [editedDishName, setEditedDishName] = useState('');
@@ -21,19 +21,15 @@ const EditPage = ({ token }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isDishesLoading, setIsDishesLoading] = useState(true);
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+    const [token, setToken] = useState('');
 
     const ingredientTemplate = { ingredient: '', allergens: [] };
 
     useEffect(() => {
-        if (token) {
-            fetchAvailableData();
-        } else {
-            // redirect to /login if not logged in'
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            window.location.href = '/login';
-        }
-    }, [token]);
+        setToken(localStorage.getItem('access_token'));
+        // localStorage.getItem('access_token');
+        fetchAvailableData();
+    }, []);
 
     const fetchAvailableData = async () => {
         try {

@@ -68,7 +68,7 @@ const Navbar = () => {
                                     onClick={() => {
                                         localStorage.removeItem('access_token');
                                         localStorage.removeItem('refresh_token');
-                                        window.location.href = '/';
+                                        window.location.href = '/login';
                                     }}
                                     className="mobile-menu-item"
                                 >
@@ -119,7 +119,7 @@ const Navbar = () => {
                                 onClick={() => {
                                     localStorage.removeItem('access_token');
                                     localStorage.removeItem('refresh_token');
-                                    window.location.href = '/';
+                                    window.location.href = '/login';
                                 }}
                                 className="menu-item"
                             >
