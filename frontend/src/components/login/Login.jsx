@@ -31,7 +31,7 @@ const LoginForm = ({ onSignup, onResetPassword }) => {
             localStorage.setItem('access_token', data.response.session.access_token);
             localStorage.setItem('refresh_token', data.response.session.refresh_token);
 
-            window.location.href = '/edit'; // Redirect to the edit page after login
+            window.location.href = '/search'; // Redirect to the search page after login
         } catch (err) {
             console.error('An error occurred while logging in:', err);
             setError('Authentication server error.');
