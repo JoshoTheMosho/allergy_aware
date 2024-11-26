@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import axios from 'axios';
 import SearchBar from '../components/searchIngredients/SearchBar';
 import { Grid2, Card, CardContent, Typography, Button, Collapse, Box } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import config from '../../config';
 import NotLoggedIn from '../components/common/NotLoggedIn';
 import SearchResults from '../components/searchIngredients/SearchResults';
@@ -10,8 +11,11 @@ const SearchPage = () => {
     const [results, setResults] = useState([]);
     const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false);
+    const [loadingCategories, setLoadingCategories] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [expanded, setExpanded] = useState({});
+    const [searchCategory, setSearchCategory] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -27,6 +31,8 @@ const SearchPage = () => {
 
     const fetchAllDishes = async (authToken) => {
         setLoading(true);
+        setSearchTerm('');
+        setSearchCategory('All');
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/all_dishes/`, {
                 headers: {
@@ -43,6 +49,7 @@ const SearchPage = () => {
 
     const fetchCategories = async (authToken) => {
         try {
+            setLoadingCategories(true);
             const response = await axios.get(`${config.backendUrl}/allergens/categories/`, {
                 headers: { Authorization: `Bearer ${authToken}` }
             });
@@ -51,10 +58,13 @@ const SearchPage = () => {
         } catch (err) {
             console.error('Error fetching categories:', err);
         }
+        setLoadingCategories(false);
     };
 
     const fetchDishesByCategory = async (category) => {
         setLoading(true);
+        setSearchTerm('');
+        setSearchCategory(category);
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/dishes_by_category/`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -79,6 +89,8 @@ const SearchPage = () => {
         setResults([]);
         setLoading(true);
         setHasSearched(true);
+        setSearchCategory('')
+        setSearchTerm(query);
 
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/search/`, {
@@ -90,7 +102,7 @@ const SearchPage = () => {
                 }
             });
 
-            setResults([response.data]); // Wrap in array to match `map` function on single item
+            setResults(response.data); // Wrap in array to match `map` function on single item
 
         } catch (err) {
             console.error('An error occurred while fetching data:', err);
@@ -108,24 +120,37 @@ const SearchPage = () => {
         <div className='demo-width'>
             <SearchBar placeholder="Search for dishes" onSearch={handleSearch} loading={loading} />
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 2 }}>
-                <Button variant="contained" color="primary" onClick={() => fetchAllDishes(token)}>
-                    All
-                </Button>
+                {loadingCategories ? (
+                    <div className="loading-indicator">
+                        <CircularProgress />
+                    </div>
+                ) :
+                    <Button
+                        variant="contained"
+                        color={searchCategory === 'All' ? "secondary" : "primary"}
+                        onClick={() => fetchAllDishes(token)}
+                    >
+                        All
+                    </Button>
+                }
                 {categories.map((category, index) => (
-                    <Button key={index} variant="contained" onClick={() => fetchDishesByCategory(category)}>
+                    <Button
+                        key={index}
+                        variant="contained"
+                        color={searchCategory === category ? "secondary" : "primary"}
+                        onClick={() => fetchDishesByCategory(category)}
+                    >
                         {category}
                     </Button>
                 ))}
             </Box>
-            <Box sx={{ marginTop: '20px', maxHeight: 'auto', overflowY: 'auto' }}>
+            <Box sx={{ display: 'flex', marginTop: '20px', justifyContent: 'center', maxHeight: 'auto', overflowY: 'auto' }}>
                 <Suspense fallback={<div>Loading...</div>}>
-                    <SearchResults results={results} loading={loading} />
+                    <SearchResults results={results} loading={loading} hasSearched={hasSearched} />
                 </Suspense>
             </Box>
         </div>
     );
 };
-
-//const SearchPage = ({ supabase }) => <SearchIngredients />;
 
 export default SearchPage;

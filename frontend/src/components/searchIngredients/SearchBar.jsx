@@ -33,6 +33,11 @@ const SearchBar = ({ placeholder, onSearch, loading }) => {
           className="search-input"
           value={query}
           onChange={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearchClick();
+            }
+          }}
         />
         <button
           className="search-button"
