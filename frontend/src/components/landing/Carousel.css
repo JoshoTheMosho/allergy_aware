@@ -1,0 +1,67 @@
+.steps {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .steps-carousel {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 100%;
+  }
+  
+  .step {
+    min-width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribute content evenly */
+    padding: 0 5%; /* Add some horizontal padding */
+    box-sizing: border-box; /* Ensure padding doesn't overflow */
+  }
+  
+  .text-container {
+    flex: 1;
+    max-width: 50%; /* Limit text width */
+    padding-right: 5%; /* Add some spacing between text and image */
+  }
+  
+  .image-container-2 {
+    flex: 1;
+    max-width: 50%; /* Limit image width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .step-image-2 {
+    max-width: 100%;
+    max-height: 500px; /* Adjust as needed */
+    object-fit: contain;
+  }
+  
+  .carousel-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  .carousel-btn {
+    background: rgba(255,255,255,0.7);
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
