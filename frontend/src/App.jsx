@@ -9,6 +9,8 @@ import EditPage from './pages/EditPage';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import ComingSoon from './components/common/ComingSoon';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import './App.css';
 
 function App() {
@@ -48,8 +50,9 @@ function App() {
                         <Route path="/edit" element={<EditPage />} />
                         <Route path="/profile" element={<ComingSoon />} />
                         <Route path="/help" element={<ComingSoon />} />
-                        <Route path="/privacy" element={<ComingSoon />} />
-                        <Route path="/terms" element={<ComingSoon />} />
+                        <Route path="/demo" element={<ComingSoon />} />
+                        <Route path="/privacy" element={<PrivacyPolicy />} />
+                        <Route path="/terms" element={<TermsOfService />} />
                     </Routes>
                 </Box>
                 <Footer />
