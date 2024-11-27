@@ -415,45 +415,13 @@ def get_ingredients_data(user=Depends(get_current_user)):
             allergen = row["allergen"]
             if ingredient not in ingredients_allergens:
                 ingredients_allergens[ingredient] = []
+            if allergen == "Unknown":
+                continue
             ingredients_allergens[ingredient].append(allergen)
 
-        result = [{"ingredient": name, "allergens": allergens} for name, allergens in ingredients_allergens.items()]
-        return result or [{}]
+        result = [{"ingredient": name, "allergens": sorted(allergens)} for name, allergens in ingredients_allergens.items()]
+        return sorted(result, key=lambda x: x["ingredient"]) or [{}]
 
-    except Exception as e:
-        logger.error("Error fetching ingredient names: %s", str(e))
-        raise HTTPException(status_code=500, detail="Error fetching ingredient names")
-
-@router.get("/ingredients", response_model=List[str])
-def get_ingredient_names(user=Depends(get_current_user)):
-    """
-    Returns a list of ingredients for the user's restaurant.
-    """
-    logger.info("Fetching dish names for user: %s", user.user.id)
-
-    try:
-        # Step 1: Query the "user" table to get the associated restaurant_id for the current user
-        user_result = supabase.table("users")\
-            .select("restaurant_id")\
-            .eq("id", user.user.id)\
-            .execute()
-        
-        logger.info("User Result: %s", user_result.data)
-
-        if not user_result.data:
-            logger.error("No restaurant associated with this user.")
-            raise HTTPException(status_code=404, detail="User has no associated restaurant.")
-
-        restaurant_id = user_result.data[0]['restaurant_id']
-        
-        # Step 2: Fetch the list of ingredients names
-        ingredient_names = supabase.table("ingredients")\
-            .select("name")\
-            .eq("restaurant_id", restaurant_id)\
-            .execute()
-        
-        ingredient_names = list({ingredient['name'] for ingredient in ingredient_names.data})
-        return sorted(ingredient_names) or []
     except Exception as e:
         logger.error("Error fetching ingredient names: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching ingredient names")
@@ -544,6 +512,9 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
             ingredient_name = ingredient["ingredient"]
             allergens = ingredient.get("allergens", ["Unknown"])
 
+            if not allergens:
+                allergens = ["Unknown"]
+
             delete_ingredients_response = supabase.table("ingredients")\
                 .delete()\
                 .eq("restaurant_id", restaurant_id)\
@@ -559,8 +530,12 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
 
             logger.info("Inserted ingredient '%s' for dish '%s'", ingredient_name, new_name)
 
+            logger.info("Allergens: %s", allergens)
+
             # Insert allergens for each ingredient
             for allergen in allergens:
+                print("Allergen: ", allergen)
+                print("Ingredient Name: ", ingredient_name)
                 insert_allergen_response = supabase.table("ingredients").insert({
                     "name": ingredient_name,
                     "restaurant_id": restaurant_id,
