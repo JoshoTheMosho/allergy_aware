@@ -97,6 +97,7 @@ const EditPage = () => {
             const response = await fetch(`${config.backendUrl}/allergens/categories/${dishName}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             if (response.ok) {
                 const data = await response.json();
+                console.log("Category data:", data);
                 setSelectedCategory(data);
             }
         } catch (error) {
