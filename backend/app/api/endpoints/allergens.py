@@ -79,8 +79,8 @@ def get_all_dishes_from_ingredients(dishes_result, ingredients_data):
                     dish_allergens.add(allergen)
         dishes.append(Dish(
             name=dish_name,
-            ingredients=ingredients_list,
-            allergens=list(dish_allergens),
+            ingredients=sorted(ingredients_list),
+            allergens=sorted(list(dish_allergens)),
             restaurant_id=dishes_result.data[0]['restaurant_id']
         ))
 
@@ -673,11 +673,11 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
                 .execute()
 
             # Deduplicate allergens and filter out "Unknown"
-            allergens = list(set(
+            allergens = sorted(list(set(
                 allergen["allergen"] 
                 for allergen in ingredient_result.data 
                 if allergen["allergen"] and allergen["allergen"] != "Unknown"
-            ))
+            )))
 
             ingredients_with_allergens.append({
                 "ingredient": ingredient_name,
@@ -686,7 +686,7 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
 
         logger.info(f'Successfully fetched dish {dishName} with ingredients and allergens {ingredients_with_allergens}')
 
-        return ingredients_with_allergens
+        return sorted(ingredients_with_allergens, key=lambda x: x["ingredient"])
 
     except Exception as e:
         logger.error("Error fetching dish: %s", str(e))
