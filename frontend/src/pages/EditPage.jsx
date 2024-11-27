@@ -28,13 +28,22 @@ const EditPage = () => {
     useEffect(() => {
         setToken(localStorage.getItem('access_token'));
         // localStorage.getItem('access_token');
-        fetchAvailableData();
     }, []);
 
-    const fetchAvailableData = async () => {
+    useEffect(() => {
+        const authToken = localStorage.getItem('access_token');
+        if (authToken) {
+            setToken(authToken);
+            fetchAvailableData(authToken);
+        } else {
+            console.error("No token found");
+        }
+    }, []);
+
+    const fetchAvailableData = async (authToken) => {
         try {
             setIsLoading(true);
-            await Promise.all([fetchAvailableDishes(), fetchAvailableAllergens(), fetchAvailableCategories(), fetchAvailableIngredientsData()]);
+            await Promise.all([fetchAvailableDishes(authToken), fetchAvailableAllergens(authToken), fetchAvailableCategories(authToken), fetchAvailableIngredientsData(authToken)]);
         } catch (error) {
             console.log(error);
             setErrorMessage("Failed to fetch data. Please try again.");
@@ -43,10 +52,10 @@ const EditPage = () => {
         }
     };
 
-    const fetchAvailableDishes = async () => {
+    const fetchAvailableDishes = async (authToken) => {
         try {
             setIsDishesLoading(true);
-            const response = await fetch(`${config.backendUrl}/allergens/dishes`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/dishes`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             const data = await response.json();
             setAvailableDishes([
                 "Create Dish",
@@ -58,9 +67,9 @@ const EditPage = () => {
         setIsDishesLoading(false);
     };
 
-    const fetchAvailableIngredientsData = async () => {
+    const fetchAvailableIngredientsData = async (authToken) => {
         try {
-            const response = await fetch(`${config.backendUrl}/allergens/ingredientsData`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/ingredientsData`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             const data = await response.json();
             setAvailableIngredientsData(data);
         } catch {
@@ -68,9 +77,9 @@ const EditPage = () => {
         }
     };
 
-    const fetchAvailableAllergens = async () => {
+    const fetchAvailableAllergens = async (authToken) => {
         try {
-            const response = await fetch(`${config.backendUrl}/allergens/tags`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/tags`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             const data = await response.json();
             setAvailableAllergens(data);
         } catch {
@@ -78,9 +87,9 @@ const EditPage = () => {
         }
     };
 
-    const fetchAvailableCategories = async () => {
+    const fetchAvailableCategories = async (authToken) => {
         try {
-            const response = await fetch(`${config.backendUrl}/allergens/categories`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/categories`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             const data = await response.json();
             setAvailableCategories(data);
         } catch {
@@ -88,11 +97,12 @@ const EditPage = () => {
         }
     };
 
-    const fetchDishCategory = async (dishName) => {
+    const fetchDishCategory = async (dishName, authToken) => {
         try {
-            const response = await fetch(`${config.backendUrl}/allergens/categories/${dishName}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/categories/${dishName}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             if (response.ok) {
                 const data = await response.json();
+                console.log("Category data:", data);
                 setSelectedCategory(data);
             }
         } catch (error) {
@@ -100,7 +110,7 @@ const EditPage = () => {
         }
     };
 
-    const fetchDishDetails = async (dishName) => {
+    const fetchDishDetails = async (dishName, authToken) => {
         setSuccessMessage('');
         setErrorMessage('');
 
@@ -111,11 +121,11 @@ const EditPage = () => {
             return;
         }
 
-        fetchDishCategory(dishName);
+        fetchDishCategory(dishName, authToken);
 
         try {
             setIsLoading(true);
-            const response = await fetch(`${config.backendUrl}/allergens/dishes/${dishName}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const response = await fetch(`${config.backendUrl}/allergens/dishes/${dishName}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             if (response.ok) {
                 const dishData = await response.json();
                 setEditedDishName(dishName);
@@ -139,7 +149,7 @@ const EditPage = () => {
             setDishName(newValue);
             setEditedDishName(newValue);
             setSelectedDish(newValue);
-            fetchDishDetails(newValue);
+            fetchDishDetails(newValue, token);
         } else {
             setDishName('');
             setEditedDishName('');
@@ -190,8 +200,9 @@ const EditPage = () => {
                 setSuccessMessage("Dish deleted successfully!");
                 setDishName('');
                 setIngredients([ingredientTemplate]);
-                setSelectedDish(null);
-                fetchAvailableData();
+                setSelectedDish('');
+                setSelectedCategory('')
+                fetchAvailableData(token);
             } else {
                 setErrorMessage("Error deleting dish. Please try again.");
             }
@@ -266,8 +277,9 @@ const EditPage = () => {
                 setSuccessMessage("Dish saved successfully!");
                 setDishName('');
                 setIngredients([{ ...ingredientTemplate }]);
-                setSelectedDish(null);
-                fetchAvailableData();
+                setSelectedDish('');
+                setSelectedCategory('');
+                fetchAvailableData(token);
             } else {
                 setErrorMessage("Error saving dish. Please try again.");
             }
@@ -345,7 +357,7 @@ const EditPage = () => {
                                         sx={{ mb: 3 }}
                                     />
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2 }}>
                                         <Autocomplete
                                             freeSolo
                                             options={availableCategories}
