@@ -3,27 +3,59 @@ import { TextField, Button, Box, Typography, CircularProgress } from '@mui/mater
 import config from '../../../config';
 
 const SignupForm = ({ onBackToLogin }) => {
+    const [restaurantName, setRestaurantName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [restaurantName, setRestaurantName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
+
+    const handleRestaurantNameChange = (val) => {
+        setRestaurantName(val);
+        setError('');
+    }
+
+    const handleEmailChange = (val) => {
+        setEmail(val);
+        setError('');
+    }
+
+    const handlePasswordChange = (val) => {
+        console.log();
+        setPassword(val);
+        setError('');
+    }
+
+    const handleConfirmPasswordChange = (val) => {
+        setConfirmPassword(val);
+        setError('');
+    }
+
+    const handleError = (err) => {
+        setError(err);
+        setLoading(false);
+    }
+
     const handleSignup = async (e) => {
-        e.preventDefault();
         setError('');
         setLoading(true);
 
         if (!email || !password || !confirmPassword || !restaurantName) {
-            setError('Please fill in all fields.');
+            handleError('Please fill in all fields.');
             setLoading(false);
             return;
         }
 
+        if (password.length <= 6) {
+            handleError('Password must be at least 6 characters long.');
+            setLoading(false);
+            return
+        }
+
         if (password !== confirmPassword) {
-            setError('Passwords do not match.');
+            handleError('Passwords do not match.');
             setLoading(false);
             return;
         }
@@ -58,7 +90,7 @@ const SignupForm = ({ onBackToLogin }) => {
             setSuccess(true);
         } catch (err) {
             console.error('An error occurred during signup:', err);
-            setError(err.message || 'An error occurred. Please try again.');
+            handleError(err.message || 'An error occurred. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -104,7 +136,8 @@ const SignupForm = ({ onBackToLogin }) => {
                             fullWidth
                             margin="normal"
                             value={restaurantName}
-                            onChange={(e) => setRestaurantName(e.target.value)}
+                            onChange={(e) => handleRestaurantNameChange(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSignup(e)}
                             required
                         />
                         <TextField
@@ -113,7 +146,8 @@ const SignupForm = ({ onBackToLogin }) => {
                             fullWidth
                             margin="normal"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => handleEmailChange(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSignup()}
                             required
                         />
                         <TextField
@@ -123,7 +157,8 @@ const SignupForm = ({ onBackToLogin }) => {
                             fullWidth
                             margin="normal"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => handlePasswordChange(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSignup()}
                             required
                         />
                         <TextField
@@ -133,7 +168,8 @@ const SignupForm = ({ onBackToLogin }) => {
                             fullWidth
                             margin="normal"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSignup()}
                             required
                         />
                     </form>
