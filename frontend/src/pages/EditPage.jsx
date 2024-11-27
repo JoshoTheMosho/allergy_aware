@@ -26,11 +26,6 @@ const EditPage = () => {
     const ingredientTemplate = { ingredient: '', allergens: [] };
 
     useEffect(() => {
-        setToken(localStorage.getItem('access_token'));
-        // localStorage.getItem('access_token');
-    }, []);
-
-    useEffect(() => {
         const authToken = localStorage.getItem('access_token');
         if (authToken) {
             setToken(authToken);
@@ -102,7 +97,6 @@ const EditPage = () => {
             const response = await fetch(`${config.backendUrl}/allergens/categories/${dishName}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
             if (response.ok) {
                 const data = await response.json();
-                console.log("Category data:", data);
                 setSelectedCategory(data);
             }
         } catch (error) {
@@ -146,17 +140,27 @@ const EditPage = () => {
 
     const handleDishSelect = (event, newValue) => {
         if (newValue) {
-            setDishName(newValue);
+            const isExistingDish = availableDishes.includes(newValue);
+
             setEditedDishName(newValue);
-            setSelectedDish(newValue);
-            fetchDishDetails(newValue, token);
+            setDishName(isExistingDish ? newValue : 'Create Dish');
+            setSelectedDish(isExistingDish ? newValue : 'Create Dish');
+            setSelectedCategory('');
+            setIngredients([{ ...ingredientTemplate }]);
+
+            if (isExistingDish) {
+                fetchDishDetails(newValue, token);
+            }
         } else {
             setDishName('');
             setEditedDishName('');
+            setSelectedCategory('');
             setIngredients([{ ...ingredientTemplate }]);
         }
+
         setSuccessMessage('');
     };
+
 
     const handleIngredientChange = (index, newIngredient) => {
         const ingredientData = availableIngredientsData.find((item) => item.ingredient === newIngredient) || { allergens: [] };
@@ -323,7 +327,6 @@ const EditPage = () => {
                             freeSolo
                             options={availableDishes}
                             value={dishName}
-                            onInputChange={(event, newValue) => setDishName(newValue)}
                             onChange={handleDishSelect}
                             renderInput={(params) => <TextField {...params} label="Select or Create Dish" variant="outlined" fullWidth />}
                             sx={{ mb: 3 }}
@@ -332,7 +335,7 @@ const EditPage = () => {
                 </Paper>
             </Box>
 
-            {selectedDish &&
+            {selectedDish && dishName &&
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3, pb: 15, backgroundColor: '#f5f5f5' }}>
                     <Paper elevation={3} sx={{ width: '100%', maxWidth: '800px', p: 4, mt: 3, borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                         <Typography variant="h5" component="h1" textAlign="center" gutterBottom>
