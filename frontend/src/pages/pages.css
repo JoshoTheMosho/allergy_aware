@@ -57,3 +57,76 @@ button:hover {
     background-color: #333;
     color: #fff;
 }
+
+/* Styling with help from ChatGPT */
+
+.privacy-policy,
+.terms-of-service {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+.privacy-policy h1,
+.terms-of-service h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  text-align: center;
+  color: #222;
+}
+
+.privacy-policy h2,
+.terms-of-service h2 {
+  font-size: 1.8em;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  color: #444;
+}
+
+.privacy-policy p,
+.terms-of-service p {
+  margin-bottom: 1em;
+}
+
+.privacy-policy ul,
+.terms-of-service ul {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.privacy-policy li,
+.terms-of-service li {
+  margin-bottom: 0.5em;
+}
+
+.privacy-policy a,
+.terms-of-service a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.privacy-policy a:hover,
+.terms-of-service a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .privacy-policy,
+  .terms-of-service {
+    padding: 20px 15px;
+  }
+
+  .privacy-policy h1,
+  .terms-of-service h1 {
+    font-size: 2em;
+  }
+
+  .privacy-policy h2,
+  .terms-of-service h2 {
+    font-size: 1.5em;
+  }
+}
+

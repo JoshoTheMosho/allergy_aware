@@ -73,6 +73,7 @@ const LoginForm = ({ onSignup, onResetPassword }) => {
                     margin="normal"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleLogin(e)}
                     required
                 />
                 <TextField
@@ -83,6 +84,7 @@ const LoginForm = ({ onSignup, onResetPassword }) => {
                     margin="normal"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleLogin(e)}
                     required
                 />
             </form>

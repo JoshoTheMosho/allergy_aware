@@ -4,6 +4,7 @@ from typing import List
 from ...core.config import supabase
 from ..dependencies.get_user import get_current_user
 from ...schemas.dish import Dish
+from ...schemas.dish import sort_dishes_by_name
 from ...schemas.ingredient import Ingredient
 from ...schemas.restaurant import Restaurant
 from ...schemas.ingredientWithAllergens import IngredientWithAllergens
@@ -48,7 +49,7 @@ def get_all_dishes(unique_dish_names, dishes_result, restaurant_id):
             restaurant_id=restaurant_id
         ))
     
-    return dishes
+    return sort_dishes_by_name(dishes)
 
 def get_all_dishes_from_ingredients(dishes_result, ingredients_data):
     # Assisted with AI tools to optimize the code
@@ -78,12 +79,12 @@ def get_all_dishes_from_ingredients(dishes_result, ingredients_data):
                     dish_allergens.add(allergen)
         dishes.append(Dish(
             name=dish_name,
-            ingredients=ingredients_list,
-            allergens=list(dish_allergens),
+            ingredients=sorted(ingredients_list),
+            allergens=sorted(list(dish_allergens)),
             restaurant_id=dishes_result.data[0]['restaurant_id']
         ))
 
-    return dishes
+    return sort_dishes_by_name(dishes)
 
 
 @router.get("/search/", response_model=List[Dish])
@@ -167,7 +168,7 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
                 restaurant_id=restaurant_id
             ))
 
-        return dishes
+        return sort_dishes_by_name(dishes)
 
     
     except HTTPException as http_exc:
@@ -226,7 +227,7 @@ def all_dishes(user=Depends(get_current_user)):
 
         # Get all dishes with optimized processing
         dishes = get_all_dishes_from_ingredients(dishes_result, ingredients_result.data)
-        return dishes
+        return sort_dishes_by_name(dishes)
 
 
     except Exception as e:
@@ -323,7 +324,7 @@ def get_dishes_by_category(category_name: str = Query(..., title="Category Name"
             ))
 
 
-        return dishes
+        return sort_dishes_by_name(dishes)
     
     except HTTPException as http_exc:
         # If an HTTPException is raised, re-raise it
@@ -364,7 +365,7 @@ def get_categories(user=Depends(get_current_user)):
             if category.get('category', []) not in categories:
                 categories.append(category.get('category', []))
 
-        return categories
+        return sorted(categories)
 
     except HTTPException as http_exc:
         # If an HTTPException is raised, re-raise it
@@ -452,7 +453,7 @@ def get_ingredient_names(user=Depends(get_current_user)):
             .execute()
         
         ingredient_names = list({ingredient['name'] for ingredient in ingredient_names.data})
-        return ingredient_names or []
+        return sorted(ingredient_names) or []
     except Exception as e:
         logger.error("Error fetching ingredient names: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching ingredient names")
@@ -506,7 +507,7 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
         if category:
             logger.info(f'Fetching category ID for restaurant_id {restaurant_id} and category {category}')
 
-            category_result = supabase.table("category_id").select("category_id").eq("category_name", category).execute()
+            category_result = supabase.table("category_id").select("category_id").eq("category_name", category).eq("restaurant_id", restaurant_id).execute()
 
             if not category_result.data:
                 logger.info(f'Category {category} does not exist in category_id. Inserting category {category} for restaurant_id {restaurant_id}')
@@ -517,9 +518,10 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
                     .execute()
                 category_id = category_insert_response.data[0]['category_id']            
             else:
+                logger.info(f'Category result: {category_result.data} {category_result.data[0]} {category_result.data[0]["category_id"]}')
                 category_id = category_result.data[0]['category_id'] 
 
-        if category_id:
+        if category_id is not None:
             logger.info(f'Upserting category {category} with category_id {category_id} for dish {new_name}')
 
             # Upsert category into category table
@@ -671,11 +673,11 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
                 .execute()
 
             # Deduplicate allergens and filter out "Unknown"
-            allergens = list(set(
+            allergens = sorted(list(set(
                 allergen["allergen"] 
                 for allergen in ingredient_result.data 
                 if allergen["allergen"] and allergen["allergen"] != "Unknown"
-            ))
+            )))
 
             ingredients_with_allergens.append({
                 "ingredient": ingredient_name,
@@ -684,7 +686,7 @@ def get_dish_by_name(dishName: str, user=Depends(get_current_user)):
 
         logger.info(f'Successfully fetched dish {dishName} with ingredients and allergens {ingredients_with_allergens}')
 
-        return ingredients_with_allergens
+        return sorted(ingredients_with_allergens, key=lambda x: x["ingredient"])
 
     except Exception as e:
         logger.error("Error fetching dish: %s", str(e))
@@ -809,7 +811,7 @@ def get_categories(user=Depends(get_current_user)):
         
         categories = list({category['category_name'] for category in category_results.data})
 
-        return categories or []
+        return sorted(categories) or []
     except Exception as e:
         logger.error("Error fetching categories: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching categories")

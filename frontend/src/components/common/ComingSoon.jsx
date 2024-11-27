@@ -11,7 +11,7 @@ const ComingSoon = () => {
                 We're working hard to launch our new website. Stay tuned!
             </Typography>
             <Typography variant="body1" sx={{ mb: 3 }}>
-                In the meantime, check back later or follow us on our social media for updates.
+                In the meantime, check back later or check your email for updates.
             </Typography>
             <Button variant="contained" color="primary" component={Link} to="/">
                 Back to Home

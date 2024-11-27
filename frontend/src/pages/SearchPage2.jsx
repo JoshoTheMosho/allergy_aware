@@ -119,7 +119,7 @@ const SearchPage = () => {
     return (
         <div className='demo-width'>
             <SearchBar placeholder="Search for dishes" onSearch={handleSearch} loading={loading} />
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 1, mt: 2 }}>
                 {loadingCategories ? (
                     <div className="loading-indicator">
                         <CircularProgress />
@@ -129,6 +129,10 @@ const SearchPage = () => {
                         variant="contained"
                         color={searchCategory === 'All' ? "secondary" : "primary"}
                         onClick={() => fetchAllDishes(token)}
+                        sx={{
+                            borderRadius: 3,
+                            paddingX: 3,
+                        }}
                     >
                         All
                     </Button>
@@ -139,6 +143,10 @@ const SearchPage = () => {
                         variant="contained"
                         color={searchCategory === category ? "secondary" : "primary"}
                         onClick={() => fetchDishesByCategory(category)}
+                        sx={{
+                            borderRadius: 3,
+                            paddingX: 3,
+                        }}
                     >
                         {category}
                     </Button>
