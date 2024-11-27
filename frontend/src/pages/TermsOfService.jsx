@@ -1,5 +1,6 @@
-import React from 'react';
 import './pages.css';
+
+/* Built out Terms of Service with help from ChatGPT */
 
 const TermsOfService = () => (
     <div className="terms-of-service">

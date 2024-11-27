@@ -1,5 +1,6 @@
-import React from 'react';
 import './pages.css';
+
+/* Built out Privacy Policy with help from ChatGPT */
 
 const PrivacyPolicy = () => (
     <div className="privacy-policy">
