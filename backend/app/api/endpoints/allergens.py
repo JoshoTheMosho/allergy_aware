@@ -114,6 +114,20 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
         
         if not user_result.data:
             raise HTTPException(status_code=404, detail="User or restaurant not found")
+
+        restaurant_id = user_result.data[0]['restaurant_id']
+
+        # Step 2: Query the dishes table based on the queried dish name
+        dishes_result = supabase.table("dishes")\
+            .select("*")\
+            .ilike("name", f"%{query}%")\
+            .eq("restaurant_id", restaurant_id)\
+            .execute()
+
+         # Extract the list of ingredients found
+        dishes_data = dishes_result.data
+        if not dishes_data:
+            return []
         
         dish_ingredients = {}
         for dish in dishes_data:
