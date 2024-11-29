@@ -325,7 +325,6 @@ def get_dishes_by_category(category_name: str = Query(..., title="Category Name"
 
 
         return sort_dishes_by_name(dishes)
-    
     except HTTPException as http_exc:
         # If an HTTPException is raised, re-raise it
         raise http_exc
