@@ -53,6 +53,7 @@ function App() {
                         <Route path="/demo" element={<ComingSoon />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
                         <Route path="/terms" element={<TermsOfService />} />
+                        <Route path="*" element={<ComingSoon />} />
                     </Routes>
                 </Box>
                 <Footer />
