@@ -13,6 +13,7 @@ const Landing = () => {
       features: ["View Demo page"],
       buttonText: "Try Demo",
       type: "demo",
+      link: "/demo",
     },
     {
       title: "Pro",
@@ -26,6 +27,7 @@ const Landing = () => {
       ],
       buttonText: "Choose Pro",
       type: "pro",
+      link: "/payment"
     },
     {
       title: "Enterprise",
@@ -39,6 +41,7 @@ const Landing = () => {
       ],
       buttonText: "Contact Us",
       type: "enterprise",
+      link: "/contact"
     },
   ];
 
@@ -194,7 +197,7 @@ const Landing = () => {
                       </li>
                     ))}
                   </ul>
-                  <button className="button-36 payment">
+                  <button className="button-36 payment" to={plan.link}>
                     {plan.buttonText}
                   </button>
                 </div>
@@ -205,7 +208,8 @@ const Landing = () => {
             Higher Usage?
             <Link
               className="button-36 enterprise-button"
-              to="mailto:info@leadexportr.com?subject=Enterprise Inquiry"
+              // to="mailto:sales@allergenie.ca?subject=Enterprise Inquiry"
+              to="/contact"
             >
               Contact Sales
             </Link>
@@ -216,7 +220,10 @@ const Landing = () => {
           <h2 className="section-title">
             Ready to Transform Your Restaurant Operations?
           </h2>
-          <Link className="button-36 cta-button" to="/search">
+          <Link
+            className="button-36 cta-button"
+            to={token ? "/search" : "/login"}
+          >
             Start Now
           </Link>
         </section>
