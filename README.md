@@ -1,5 +1,5 @@
 # Allergenie
-**Production:** [https://allergenie.up.railway.app/](https://allergenie.up.railway.app/)  
+**Production:** [https://allergenie.ca/](https://allergenie.ca/)  
 **Development:** [https://allergenie-dev.up.railway.app/](https://allergenie-dev.up.railway.app/)  
 **Railway Deployments:** [https://railway.app/project/1627eb04-2e6e-4749-b8f1-85878ff99681](https://railway.app/project/1627eb04-2e6e-4749-b8f1-85878ff99681)
 
@@ -9,15 +9,18 @@
 - Logout
 - Search Allergen
 - Search Ingredient
+- Add Ingredients
+- Add Dishes
+- Set and Search Categories
+- Clear Landing Page/Contact Page
 - ...
 
 **Planned**:
-- Add Ingredients
-- Flag Allergens
-- Search By Common Allergen
 - Set Alert to Update Menu
 - Restauraunt Settings/Features
-- Clear Landing Page/Contact Page
+- Image Recognition for Inputting Recipes
+- Account Setup/Payment Integration
+- User Account Management
 - ...
 
 ### GitHub Workflow

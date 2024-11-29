@@ -165,6 +165,10 @@ body {
   text-align: center; /* Ensures centered text for larger screens */
 }
 
+.catch-smaller{
+  font-size: 3rem;
+}
+
 /* Selling Points Section Styling */
 .selling-points {
   margin-top: 0rem;
@@ -221,7 +225,7 @@ body {
   .catch-phrase {
     font-size: 2.5rem; /* Adjust font size for tablets and smaller screens */
     margin-top: 5px; /* Adjust margin for better spacing on smaller screens */
-    text-align: left; /* Align left for medium screens */
+    text-align: center; /* Align left for medium screens */
   }
 }
 
@@ -395,147 +399,129 @@ body {
 
 /* How It Works Section */
 .how-it-works {
-  padding: 30x 20px;
+  padding: 50px 20px;
+  padding-bottom: 10px;
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 1rem;
+  background: #fdfdfd;
 }
 
 .section-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 3rem;
   color: #11141a;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(to right, #3f75eb, #3153b3);
 }
 
 .steps {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2rem;
 }
 
 .step {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  display: flex;
   align-items: center;
-  gap: 40px;
-  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
 }
 
 .text-container {
-  order: 1;
-}
-
-.image-container {
-  order: 2;
-  display: flex;
-  justify-content: center;
-  padding-bottom: 30px;
+  flex: 1;
+  padding: 2rem;
+  text-align: left;
 }
 
 .image-container-2 {
-  order: 2;
+  flex: 1;
   display: flex;
   justify-content: center;
-  background: none;
-  padding-bottom: 30px;
+  align-items: center;
+  padding: 1rem;
+  background: #f7f9fc;
 }
 
 .step-title {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   color: #11141a;
+  background: linear-gradient(to right, #3f75eb, #3153b3);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .step-description {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #4a5568;
-  text-align: left;
-  line-height: 1.4;
-}
-
-.extension-link {
-  text-decoration: underline;
-  color: inherit; /* Maintain the same text color as the surrounding text */
-}
-
-.step-image {
-  max-width: 200%;
-  height: auto;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  line-height: 1.6;
 }
 
 .step-image-2 {
-  max-width: 105%;
+  max-width: 100%;
   height: auto;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
-  .how-it-works {
-    padding: 20px 20px;
-    text-align: center;
-    margin-bottom: 4rem;
-    width: 100%;
+  .section-title {
+    font-size: 20px;
   }
 
   .step {
-    display: flex;
     flex-direction: column;
-    align-items: center;
     text-align: center;
-    gap: 0.5rem;
-    align-items: center;
   }
 
-  .text-container {
-    width: 120%;
-    order: unset;
-    padding-bottom: 10%;
-  }
-
+  .text-container,
   .image-container-2 {
-    margin-top: 0rem;
-    padding-top: 0px;
-    width: 135%;
-    /* padding-right: 20px; */
-  }
-
-  .step-image-2 {
-    width: 150%; /* Slightly larger on mobile */
-  }
-}
-
-/* Adjustments for desktop */
-@media (min-width: 769px) {
-  .step {
-    grid-template-columns: 1fr 1fr;
-  }
-  .text-container {
-    max-width: 100%;
-    padding-left: 5rem;
-  }
-  .step-description {
-    color: #4a5568;
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
   }
 
   .step-title {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: #11141a;
+    font-size: 1.5rem;
   }
 
   .step-description {
-    font-size: 1.5rem;
-    color: #343942;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .steps {
+    gap: 3rem;
   }
 
-  .step-image {
-    width: 100%; /* Slightly smaller on desktop */
+  .step {
+    max-width: 1100px;
   }
 }
 
@@ -679,6 +665,7 @@ body {
 .pricing {
   text-align: center;
   margin-bottom: 4rem;
+  padding-top: 5rem;
   justify-content: center;
   display: flex; /* Added to enable flexbox */
   flex-direction: column;
@@ -868,5 +855,130 @@ body {
 
   .pricing .price {
     font-size: 2.75rem;
+  }
+}
+
+/* Allergy Risks Section */
+.allergy-risks {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding-top: 100px;
+  background: #fdfdfd;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.allergy-risks .section-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #11141a;
+  text-align: center;
+}
+
+.risk-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.risk-statistic {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.risk-statistic:hover {
+  box-shadow: 0 15px 25px -3px rgba(0, 0, 0, 0.1),
+    0 10px 10px -2px rgba(0, 0, 0, 0.05);
+}
+
+.risk-statistic h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #11141a;
+}
+
+.risk-statistic ul {
+  list-style-type: none;
+  padding-left: 0;
+  text-align: left;
+}
+
+.risk-statistic li {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #222222;
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.risk-statistic li::before {
+  content: "•";
+  font-size: 2.5rem;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: -0.9rem;
+  background: linear-gradient(to right, #3f75eb, #3153b3);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.risk-description {
+  text-align: left;
+  color: #4a5568;
+}
+
+.risk-description p {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.risk-description .highlight {
+  font-weight: 600;
+  color: #2563eb;
+  background: linear-gradient(to right, #3f75eb, #3153b3);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .allergy-risks {
+    padding: 20px 20px;
+    margin-bottom: 2rem;
+  }
+
+  .risk-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .risk-statistic,
+  .risk-description {
+    text-align: center;
+  }
+
+  .risk-statistic ul {
+    padding-left: 0;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .risk-statistic li,
+  .risk-description p {
+    font-size: 1.2rem;
   }
 }

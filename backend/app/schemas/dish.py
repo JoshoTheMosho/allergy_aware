@@ -15,3 +15,16 @@ class Dish(BaseModel):
     ingredients: List[str]
     allergens: List[str]
     restaurant_id: int
+
+def sort_dishes_by_name(dishes: List[Dish]) -> List[Dish]:
+    """
+    Sorts a list of Dish objects by their name in alphabetical order.
+
+    Args:
+        dishes (List[Dish]): The list of Dish objects to sort.
+
+    Returns:
+        List[Dish]: The sorted list of Dish objects.
+    """
+    return sorted(dishes, key=lambda dish: dish.name.lower())  # Case-insensitive sorting
+

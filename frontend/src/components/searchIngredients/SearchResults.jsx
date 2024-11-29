@@ -23,16 +23,15 @@ const SearchResults = ({ results, loading, hasSearched }) => {
             />
           ))}
         </div>
-      ) : (
-        hasSearched && (
-          <Typography
-            variant="body1"
-            color="textSecondary"
-            className="no-results-message"
-          >
-            No results found.
-          </Typography>
-        )
+      ) : (hasSearched && (
+        <Typography
+          variant="h5"
+          color="textSecondary"
+          align="center"
+          className="no-results-message"
+        >
+          No results found.
+        </Typography>)
       )}
     </div>
   );

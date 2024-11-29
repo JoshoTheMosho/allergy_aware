@@ -43,3 +43,91 @@ def login_user(email: str = Body(...), password: str = Body(...)):
         raise HTTPException(status_code=500, detail="An internal server error occurred.")
     
 
+@router.post("/reset/")
+def reset_password(email: str = Body(..., embed=True)):
+    """
+    Reset the user's password by sending a reset email.
+
+    Args:
+        email (str): The email address of the user requesting a password reset.
+
+    Returns:
+        dict: A dictionary indicating the success of the password reset request.
+
+    Raises:
+        HTTPException: If the email is invalid or an error occurs during the reset request.
+    """
+    try:
+        # Request a password reset email to be sent
+        response = supabase.auth.reset_password_for_email(email)
+        
+        # Response to indicate success if no exception is raised
+        return {"message": "Password reset email sent successfully."}
+
+    except AuthApiError as e:
+        # Handle known Supabase authentication errors
+        raise HTTPException(status_code=400, detail="Invalid email or user not found.")
+    
+    except Exception as e:
+        # Log unexpected errors and raise an HTTP 500 exception
+        logger.info(e)
+        raise HTTPException(status_code=500, detail="An internal server error occurred.")
+
+
+@router.post("/signup/")
+def signup_user(email: str = Body(...), password: str = Body(...), restaurantName: str = Body(...)):
+    """
+    Create a new user in the system and a corresponding restaurant.
+
+    Args:
+        email (str): The email address of the user signing up.
+        password (str): The password for the new user.
+
+    Returns:
+        dict: A dictionary indicating the success of the signup request and restaurant creation.
+
+    Raises:
+        HTTPException: If signup or restaurant creation fails.
+    """
+    try:
+        # Step 1: Sign up the user
+        response = supabase.auth.sign_up({"email": email, "password": password})
+        
+        # Check if the user was successfully created
+        if not response or not response.user:
+            raise HTTPException(status_code=400, detail="Signup failed. Please try again.")
+        
+        user_id = response.user.id  # Supabase user ID
+        
+        # Step 2: Create a new restaurant for the user
+        restaurant_response = supabase.table("Restaurants").insert({
+            "restaurant_name": restaurantName
+        }).execute()
+
+        if not restaurant_response.data:
+            raise HTTPException(status_code=500, detail="Failed to create restaurant for the user.")
+        
+        restaurant_id = restaurant_response.data[0]['restaurant_id']
+
+        user_response = supabase.table("users").insert({
+            "id": user_id,
+            "restaurant_id": restaurant_id
+        }).execute()
+
+        if not restaurant_response.data:
+            raise HTTPException(status_code=500, detail="Failed to create user association to restaurant.")
+
+        # Step 3: Return success response
+        return {
+            "message": "Signup successful.",
+            "session": response.session,
+        }
+
+    except AuthApiError as e:
+        # Handle known Supabase authentication errors
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    except Exception as e:
+        # Log unexpected errors and raise an HTTP 500 exception
+        logger.error(f"Unexpected error during signup: {e}")
+        raise HTTPException(status_code=500, detail="An internal server error occurred.")
