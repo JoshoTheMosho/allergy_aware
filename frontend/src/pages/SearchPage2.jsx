@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Suspense } from 'react';
 import axios from 'axios';
 import SearchBar from '../components/searchIngredients/SearchBar';
@@ -7,9 +7,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import config from '../../config';
 import NotLoggedIn from '../components/common/NotLoggedIn';
 import SearchResults from '../components/searchIngredients/SearchResults';
+import { AuthContext } from '../components/auth/Auth';
+
 const SearchPage = () => {
     const [results, setResults] = useState([]);
-    const [token, setToken] = useState('');
+    //const [token, setToken] = useState('');
+    const { authToken } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
@@ -19,15 +22,15 @@ const SearchPage = () => {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        const authToken = localStorage.getItem('access_token');
+        //const authToken = localStorage.getItem('access_token');
         if (authToken) {
-            setToken(authToken);
+            //setToken(authToken);
             fetchAllDishes(authToken);
             fetchCategories(authToken);
         } else {
             console.error("No token found");
         }
-    }, []);
+    }, [authToken]);
 
     const fetchAllDishes = async (authToken) => {
         setLoading(true);
@@ -67,7 +70,7 @@ const SearchPage = () => {
         setSearchCategory(category);
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/dishes_by_category/`, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${authToken}` },
                 params: {
                     category_name: category
                 }
@@ -81,7 +84,7 @@ const SearchPage = () => {
     };
 
     const handleSearch = async (query) => {
-        if (!token) {
+        if (!authToken) {
             console.error('User is not authenticated');
             return;
         }
@@ -95,7 +98,7 @@ const SearchPage = () => {
         try {
             const response = await axios.get(`${config.backendUrl}/allergens/search/`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${authToken}`
                 },
                 params: {
                     query: query
@@ -111,7 +114,7 @@ const SearchPage = () => {
         }
     };
 
-    if (!token) {
+    if (!authToken) {
         return <NotLoggedIn />;
     }
 

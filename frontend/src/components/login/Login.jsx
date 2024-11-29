@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { TextField, Button, Box, Typography, CircularProgress, Link } from '@mui/material';
 import config from '../../../config';
+import { AuthContext } from '../auth/Auth';
 
 const LoginForm = ({ onSignup, onResetPassword }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const { setTokens } = useContext(AuthContext);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,6 +30,7 @@ const LoginForm = ({ onSignup, onResetPassword }) => {
             }
 
             const data = await response.json();
+            setTokens(data.response.session.access_token, data.response.session.refresh_token);
             localStorage.setItem('access_token', data.response.session.access_token);
             localStorage.setItem('refresh_token', data.response.session.refresh_token);
 

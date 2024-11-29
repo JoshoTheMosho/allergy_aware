@@ -31,7 +31,8 @@ def login_user(email: str = Body(...), password: str = Body(...)):
         return {
             "message": "Login successful",
             "response": response,
-            "access_token": response.session.access_token
+            "access_token": response.session.access_token,
+            "refresh_token": response.session.refresh_token,
         }
     
     except AuthApiError as e:
@@ -42,6 +43,27 @@ def login_user(email: str = Body(...), password: str = Body(...)):
         logger.info(e)
         raise HTTPException(status_code=500, detail="An internal server error occurred.")
     
+@router.post("/refresh/")
+def refresh_token(refresh_token: str):
+    """
+    Refresh an access token using a refresh token.
+
+    Args:
+        refresh_token (str): The refresh token provided by the user.
+
+    Returns:
+        dict: A dictionary containing the new access token and refresh token.
+    """
+    try:
+        response = supabase.auth.refresh_session(refresh_token)
+        print("refresh successful")
+        return {
+            "access_token": response.session.access_token,
+            "refresh_token": response.session.refresh_token,
+            "expires_in": response.session.expires_in
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to refresh token.")
 
 @router.post("/reset/")
 def reset_password(email: str = Body(..., embed=True)):

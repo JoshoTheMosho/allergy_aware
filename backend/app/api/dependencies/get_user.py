@@ -18,12 +18,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     Raises:
         HTTPException: If the user is not authenticated or the token is invalid.
     """
-    # Retrieve the user from Supabase using the provided token
-    user = supabase.auth.get_user(token)
+    try:
+        # Retrieve the user from Supabase using the provided token
+        user = supabase.auth.get_user(token)
+        return user
 
-    # If the user is not found, raise an HTTP 401 Unauthorized exception
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    # Return the authenticated user
-    return user
+    except Exception as e:
+        # Raise an HTTP 401 Unauthorized exception if an error occurs
+        raise HTTPException(status_code=401, detail="Unauthorized") 
