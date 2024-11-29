@@ -161,7 +161,6 @@ const EditPage = () => {
         setSuccessMessage('');
     };
 
-
     const handleIngredientChange = (index, newIngredient) => {
         const ingredientData = availableIngredientsData.find((item) => item.ingredient === newIngredient) || { allergens: [] };
 
