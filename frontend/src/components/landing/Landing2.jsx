@@ -197,9 +197,9 @@ const Landing = () => {
                       </li>
                     ))}
                   </ul>
-                  <button className="button-36 payment" to={plan.link}>
+                  <Link className="button-36 payment" to={plan.link}>
                     {plan.buttonText}
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
