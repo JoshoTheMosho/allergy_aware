@@ -33,17 +33,17 @@
 
 AllerGenie is hosted on Railway, with a reverse proxy serving as the entry point for both frontend and backend services. The frontend is built with React (using Vite), and the backend is developed with FastAPI. For authentication, data storage, and retrieval, our backend integrates with Supabase (a PostgreSQL instance as a service).
 
-How it Works
-User Request:
-When a user visits AllerGenie.ca, their request is routed through Cloudflare to our Railway reverse proxy.
+## How it Works
+**User Request:**
+- When a user visits AllerGenie.ca, their request is routed through Cloudflare to our Railway reverse proxy.
 
-Frontend Handling:
-The reverse proxy forwards the request to the React-based frontend. The appropriate HTML page is served to the user.
+**Frontend Handling:**
+- The reverse proxy forwards the request to the React-based frontend. The appropriate HTML page is served to the user.
 
-Backend Communication:
-If the frontend needs data (e.g., allergens or dishes), it sends an API request via the reverse proxy to the FastAPI backend.
-The backend queries Supabase to retrieve or update the necessary data.
-The backend processes the data and sends a response back through the reverse proxy to the frontend.
+**Backend Communication:**
+- If the frontend needs data (e.g., allergens or dishes), it sends an API request via the reverse proxy to the FastAPI backend.
+- The backend queries Supabase to retrieve or update the necessary data.
+- The backend processes the data and sends a response back through the reverse proxy to the frontend.
 
-Response Delivery:
-The user’s browser receives the fully rendered page, including any dynamic data.
+**Response Delivery:**
+- The user’s browser receives the fully rendered page, including any dynamic data.
