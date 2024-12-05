@@ -2,12 +2,14 @@ from fastapi import APIRouter, HTTPException, Body
 from supabase import AuthApiError
 from ...core.config import supabase
 import logging
+from pydantic import BaseModel
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
 
 @router.post("/login/")
 def login_user(email: str = Body(...), password: str = Body(...)):
@@ -44,7 +46,7 @@ def login_user(email: str = Body(...), password: str = Body(...)):
         raise HTTPException(status_code=500, detail="An internal server error occurred.")
     
 @router.post("/refresh/")
-def refresh_token(refresh_token: str):
+def refresh_token(refreshToken: str = Body(...)):
     """
     Refresh an access token using a refresh token.
 
@@ -55,7 +57,7 @@ def refresh_token(refresh_token: str):
         dict: A dictionary containing the new access token and refresh token.
     """
     try:
-        response = supabase.auth.refresh_session(refresh_token)
+        response = supabase.auth.refresh_session(refreshToken)
         print("refresh successful")
         return {
             "access_token": response.session.access_token,
@@ -63,6 +65,7 @@ def refresh_token(refresh_token: str):
             "expires_in": response.session.expires_in
         }
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Failed to refresh token.")
 
 @router.post("/reset/")

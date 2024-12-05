@@ -65,6 +65,7 @@ const SearchPage = () => {
     };
 
     const fetchDishesByCategory = async (category) => {
+        console.log("new token: ", authToken)
         setLoading(true);
         setSearchTerm('');
         setSearchCategory(category);

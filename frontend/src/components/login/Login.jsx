@@ -31,10 +31,10 @@ const LoginForm = ({ onSignup, onResetPassword }) => {
 
             const data = await response.json();
             setTokens(data.response.session.access_token, data.response.session.refresh_token);
-            localStorage.setItem('access_token', data.response.session.access_token);
-            localStorage.setItem('refresh_token', data.response.session.refresh_token);
-
+    
             window.location.href = '/search'; // Redirect to the search page after login
+
+            
         } catch (err) {
             console.error('An error occurred while logging in:', err);
             setError('Authentication server error.');
