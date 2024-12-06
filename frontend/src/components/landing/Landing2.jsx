@@ -47,10 +47,10 @@ const Landing = () => {
   ];
 
   const sellingPoints = [
-    "Easy to Use",
-    "Increase Backend Efficiency",
-    "Organized Menu Storage",
-    "Instant Access",
+    "Simple and Intuitive Design",
+    "Streamlined Operations",
+    "Centralized Menu Organization",
+    "Instant Ingredient Information",
   ];
 
   const [token, setToken] = useState("");
