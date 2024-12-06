@@ -32,8 +32,21 @@ const EditPage = () => {
             fetchAvailableData(authToken);
         } else {
             console.error("No token found");
+            logout();
         }
     }, []);
+
+    const setError = (message) => {
+        setErrorMessage(message);
+        setIsLoading(false);
+        logout();
+    }
+
+    const logout = () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+    }
 
     const fetchAvailableData = async (authToken) => {
         try {
@@ -41,7 +54,7 @@ const EditPage = () => {
             await Promise.all([fetchAvailableDishes(authToken), fetchAvailableAllergens(authToken), fetchAvailableCategories(authToken), fetchAvailableIngredientsData(authToken)]);
         } catch (error) {
             console.log(error);
-            setErrorMessage("Failed to fetch data. Please try again.");
+            setError("Failed to fetch data. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -57,7 +70,7 @@ const EditPage = () => {
                 ...data
             ]);
         } catch {
-            setErrorMessage("Failed to fetch dishes.");
+            setError("Failed to fetch dishes.");
         }
         setIsDishesLoading(false);
     };
@@ -68,7 +81,7 @@ const EditPage = () => {
             const data = await response.json();
             setAvailableIngredientsData(data);
         } catch {
-            setErrorMessage("Failed to fetch ingredients and allergens.");
+            setError("Failed to fetch ingredients and allergens.");
         }
     };
 
@@ -78,7 +91,7 @@ const EditPage = () => {
             const data = await response.json();
             setAvailableAllergens(data);
         } catch {
-            setErrorMessage("Failed to fetch allergens.");
+            setError("Failed to fetch allergens.");
         }
     };
 
@@ -88,7 +101,7 @@ const EditPage = () => {
             const data = await response.json();
             setAvailableCategories(data);
         } catch {
-            setErrorMessage("Failed to fetch categories.");
+            setError("Failed to fetch categories.");
         }
     };
 
@@ -100,7 +113,7 @@ const EditPage = () => {
                 setSelectedCategory(data);
             }
         } catch (error) {
-            console.log(error);
+            setError(error);
         }
     };
 

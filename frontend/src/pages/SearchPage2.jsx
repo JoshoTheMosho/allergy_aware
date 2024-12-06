@@ -29,6 +29,12 @@ const SearchPage = () => {
         }
     }, []);
 
+    const logout = () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+    }
+
     const fetchAllDishes = async (authToken) => {
         setLoading(true);
         setSearchTerm('');
@@ -42,6 +48,7 @@ const SearchPage = () => {
             setResults(response.data); // Assuming response data is in the correct format
         } catch (err) {
             console.error('An error occurred while fetching all dishes:', err);
+            logout();
         } finally {
             setLoading(false);
         }
@@ -57,6 +64,7 @@ const SearchPage = () => {
             console.log('Categories:', response.data);
         } catch (err) {
             console.error('Error fetching categories:', err);
+            logout();
         }
         setLoadingCategories(false);
     };
@@ -75,6 +83,7 @@ const SearchPage = () => {
             setResults(response.data);  // Check the format of response.data
         } catch (err) {
             console.error('Error fetching dishes by category:', err);
+            logout();
         } finally {
             setLoading(false);
         }
@@ -106,6 +115,7 @@ const SearchPage = () => {
 
         } catch (err) {
             console.error('An error occurred while fetching data:', err);
+            logout();
         } finally {
             setLoading(false);
         }
