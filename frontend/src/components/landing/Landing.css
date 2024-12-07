@@ -165,7 +165,7 @@ body {
   text-align: center; /* Ensures centered text for larger screens */
 }
 
-.catch-smaller{
+.catch-smaller {
   font-size: 3rem;
 }
 
@@ -220,7 +220,7 @@ body {
 
 @media (max-width: 768px) {
   .catch-phrase-container {
-    width: 110%;
+    width: 130%;
   }
   .catch-phrase {
     font-size: 2.5rem; /* Adjust font size for tablets and smaller screens */
@@ -415,7 +415,7 @@ body {
 }
 
 .section-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -10px;
   left: 50%;
@@ -957,6 +957,8 @@ body {
   .allergy-risks {
     padding: 20px 20px;
     margin-bottom: 2rem;
+    width: 120%;
+    max-width: 120%;
   }
 
   .risk-content {

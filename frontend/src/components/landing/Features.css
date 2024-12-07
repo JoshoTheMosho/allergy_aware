@@ -1,40 +1,62 @@
+/* Features Section */
 .features-section {
-  padding: 1rem 0;
-  background-color: none;
+  padding: 2rem 1rem;
 }
 
 .features-container {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
 }
 
+/* Feature Card */
 .feature-card {
-  flex: 1;
-  margin: 0 1rem;
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  width: 300px; /* Card width */
+  height: 400px; /* Card height */
+  perspective: 1000px; /* Enables 3D effect for flipping */
+  cursor: pointer;
+  position: relative; /* Ensures front and back are positioned within the card */
+  transform-style: preserve-3d; /* Maintains 3D context for child elements */
+  transition: transform 0.45s ease-in-out; /* Smooth flip animation */
 }
 
-.feature-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+.feature-card.flipped {
+  transform: rotateY(180deg); /* Flips the card */
 }
 
-.feature-card-content {
+/* Front and Back Faces */
+.feature-card-front,
+.feature-card-back {
+  position: absolute; /* Ensures both faces occupy the same space */
+  top: 0; /* Aligns to the top of the parent card */
+  left: 0; /* Aligns to the left of the parent card */
+  width: 100%; /* Matches the parent's width */
+  height: 100%; /* Matches the parent's height */
+  backface-visibility: hidden; /* Hides the non-visible face */
+  border-radius: 0.75rem; /* Smooth edges */
   display: flex;
   flex-direction: column;
-  align-items: Center;
-  text-align: left;
+  align-items: center;
+  justify-content: center;
   padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.feature-card-front {
+  background-color: white; /* Front face color */
+}
+
+.feature-card-back {
+  background-color: #f3f4f6; /* Back face color */
+  transform: rotateY(180deg); /* Initially hides the back face */
+}
+
+/* Icon Styles */
 .feature-icon {
   display: flex;
   justify-content: center;
@@ -60,11 +82,13 @@
   color: #10b981;
 }
 
+/* Text Styling */
 .feature-title {
   font-size: 1.25rem;
   font-weight: bold;
   color: #1f2937;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .feature-description {
@@ -72,6 +96,8 @@
   padding: 0;
   color: #6b7280;
   line-height: 1.6;
+  text-align: left;
+  width: 100%;
 }
 
 .feature-description li {
@@ -88,13 +114,8 @@
   font-weight: bold;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .features-container {
-    flex-direction: column;
-  }
-
-  .feature-card {
-    margin: 1rem 0;
-  }
+.feature-back-description {
+  color: #4b5563;
+  text-align: center;
+  line-height: 1.6;
 }

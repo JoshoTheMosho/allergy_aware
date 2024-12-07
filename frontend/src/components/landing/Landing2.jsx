@@ -13,7 +13,8 @@ const Landing = () => {
       features: ["View Demo page"],
       buttonText: "Try Demo",
       type: "demo",
-      link: "/demo",
+      link: "https://youtu.be/xOguH56OHwA",
+      target: "blank",
     },
     {
       title: "Pro",
@@ -46,10 +47,10 @@ const Landing = () => {
   ];
 
   const sellingPoints = [
-    "Easy to Use",
-    "Increase Backend Efficiency",
-    "Organized Menu Storage",
-    "Instant Access",
+    "Simple and Intuitive Design",
+    "Streamlined Operations",
+    "Centralized Menu Organization",
+    "Instant Ingredient Information",
   ];
 
   const [token, setToken] = useState("");
@@ -102,7 +103,7 @@ const Landing = () => {
               >
                 Start Now
               </Link>
-              <Link className="button-36 watch-button" to="/demo">
+              <Link className="button-36 watch-button" to="https://youtu.be/xOguH56OHwA" target="blank">
                 Try Demo
               </Link>
             </div>
@@ -197,7 +198,7 @@ const Landing = () => {
                       </li>
                     ))}
                   </ul>
-                  <Link className="button-36 payment" to={plan.link}>
+                  <Link className="button-36 payment" to={plan.link} target={plan.target}>
                     {plan.buttonText}
                   </Link>
                 </div>

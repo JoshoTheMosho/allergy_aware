@@ -27,4 +27,3 @@ def sort_dishes_by_name(dishes: List[Dish]) -> List[Dish]:
         List[Dish]: The sorted list of Dish objects.
     """
     return sorted(dishes, key=lambda dish: dish.name.lower())  # Case-insensitive sorting
-

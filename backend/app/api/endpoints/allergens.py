@@ -169,6 +169,7 @@ def search_ingredients(query: str = Query(..., title="Query", description="Searc
             ))
 
         return sort_dishes_by_name(dishes)
+
     
     except HTTPException as http_exc:
         # If an HTTPException is raised, re-raise it
@@ -228,6 +229,7 @@ def all_dishes(user=Depends(get_current_user)):
         dishes = get_all_dishes_from_ingredients(dishes_result, ingredients_result.data)
         return sort_dishes_by_name(dishes)
 
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -274,7 +276,7 @@ def get_dishes_by_category(category_name: str = Query(..., title="Category Name"
 
         # Fetch all ingredients for the restaurant
         ingredients_result = supabase.table("ingredients")\
-        .select("*")\
+            .select("*")\
             .eq("restaurant_id", restaurant_id)\
             .execute()
 
@@ -418,6 +420,7 @@ def get_ingredients_data(user=Depends(get_current_user)):
 
         result = [{"ingredient": name, "allergens": sorted(allergens)} for name, allergens in ingredients_allergens.items()]
         return sorted(result, key=lambda x: x["ingredient"]) or [{}]
+
     except Exception as e:
         logger.error("Error fetching ingredient names: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching ingredient names")
@@ -472,7 +475,6 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
             logger.info(f'Fetching category ID for restaurant_id {restaurant_id} and category {category}')
 
             category_result = supabase.table("category_id").select("category_id").eq("category_name", category).eq("restaurant_id", restaurant_id).execute()
-
 
             if not category_result.data:
                 logger.info(f'Category {category} does not exist in category_id. Inserting category {category} for restaurant_id {restaurant_id}')
@@ -533,7 +535,6 @@ def update_dish(dish_data: dict, user=Depends(get_current_user)):
             for allergen in allergens:
                 print("Allergen: ", allergen)
                 print("Ingredient Name: ", ingredient_name)
-
                 insert_allergen_response = supabase.table("ingredients").insert({
                     "name": ingredient_name,
                     "restaurant_id": restaurant_id,
