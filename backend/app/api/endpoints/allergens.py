@@ -786,6 +786,7 @@ def get_categories(user=Depends(get_current_user)):
         categories = list({category['category_name'] for category in category_results.data})
 
         return sorted(categories) or []
+
     except Exception as e:
         logger.error("Error fetching categories: %s", str(e))
         raise HTTPException(status_code=500, detail="Error fetching categories")
