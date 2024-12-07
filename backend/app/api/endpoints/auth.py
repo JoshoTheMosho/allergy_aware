@@ -46,7 +46,7 @@ def login_user(email: str = Body(...), password: str = Body(...)):
         raise HTTPException(status_code=500, detail="An internal server error occurred.")
     
 @router.post("/refresh/")
-def refresh_token(refreshToken: str = Body(...)):
+def refresh_token():
     """
     Refresh an access token using a refresh token.
 
@@ -57,7 +57,7 @@ def refresh_token(refreshToken: str = Body(...)):
         dict: A dictionary containing the new access token and refresh token.
     """
     try:
-        response = supabase.auth.refresh_session(refreshToken)
+        response = supabase.auth.refresh_session()
         print("refresh successful")
         return {
             "access_token": response.session.access_token,
